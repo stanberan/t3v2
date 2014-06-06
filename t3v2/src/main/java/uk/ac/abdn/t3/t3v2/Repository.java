@@ -82,18 +82,7 @@ public class Repository {
 		}
 	 
 }
-	 public void read(){
-		 dataset.begin(ReadWrite.READ);
-		 System.out.println("TDB READ");
-	 }
-	 public void  write(){
-		 dataset.begin(ReadWrite.WRITE);
-		 System.out.println("TDB Write");
-		 
-	 }
-	 public void end(){
-     dataset.end();		 
-	 }
+	 
 	 
 	
 	 

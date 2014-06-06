@@ -15,7 +15,8 @@ public class Configuration {
  	final static String sesameUsername="t3";
  	final static String sesamePassword="t4ust3d";
  	
- 	final static String TDB_DIR="/Users/stanislavberan/MyDatabases/Dataset2";
+ 	final static String TDB_DIR="/Users/stanislavberan/MyDatabases/Dataset2";///var/mydb/Devices";
+ 	final static String TDB_CAP="/var/mydb/Capabilities";
  	
  	
  	

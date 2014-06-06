@@ -150,11 +150,23 @@ public Response getGraph(@PathParam("deviceid") String id,@PathParam("type") Str
 @GET
 @Path("infer/{deviceid}")
 @Produces(MediaType.TEXT_PLAIN)
-public String infer(@PathParam("deviceid") String id) {
+public Response infer(@PathParam("deviceid") String id) {
 
-InferenceService infService=new InferenceService();
- infService.inferCapabilities(id);
-	return "Inferred";
+//InferenceService infService=new InferenceService();
+final Model m=ModelController.test();
+ //infService.inferCapabilities(id);
+
+	
+	
+StreamingOutput stream = new StreamingOutput() {
+ @Override
+ public void write(OutputStream os) throws IOException,
+ WebApplicationException {
+   Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+   m.write(writer,"N3");
+   writer.close();
+ }};
+return Response.ok().entity(stream).build();
 }
 
 

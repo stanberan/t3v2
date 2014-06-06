@@ -12,8 +12,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class ModelController {
 static{
-	System.setProperty("http.proxyHost", "proxy.abdn.ac.uk");
-	  System.setProperty("http.proxyPort", "8080");
+	//System.setProperty("http.proxyHost", "proxy.abdn.ac.uk");
+	//  System.setProperty("http.proxyPort", "8080");
+//	initialize();
 }
 	final static String INSTANCE="http://t3.abdn.ac.uk/ontologies/instancedata.owl";
 	final static String TTT="http://t3.abdn.ac.uk/ontologies/t3.owl";
@@ -31,32 +32,49 @@ static{
 	static Model IOTA_M;
 	static Model RULES_M;
 	
-	public static OntModel ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
+	public static Model ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 	static Repository TDB=Repository.getSingleton();
 	
 	//OntModel provenanceModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, "http://www.w3.org/ns/prov");
-static{
-	initialize();
-}
 
+public static Model test(){
+	System.getProperties().put("proxySet","true");
+	   System.getProperties().put("proxyHost","proxy.abdn.ac.uk");
+	   System.getProperties().put("proxyPort",8080);
+	System.out.println("Testing");
+	Model m=ModelFactory.createDefaultModel();
+	m.read("http://t3.abdn.ac.uk/ontologies/simbbox.rdf",null,"TTL");
+	m.read("http://t3.abdn.ac.uk/ontologies/t3.owl",null,"RDF/XML");
+	m.read("http://t3.abdn.ac.uk/ontologies/iota.owl",null,"RDF/XML");
+	m.read(PROV);
+	return m;
+}
 	public static void initialize(){
+		
+		        final String url = "http://www.w3.org/TR/REC-rdf-syntax/example14.nt";
+		        final Model model = ModelFactory.createDefaultModel();
+		        model.read(url);
+		        model.write(System.out);
+		    
 		
 				TTT_M=ModelFactory.createDefaultModel();
 				PROV_M=ModelFactory.createDefaultModel();
 				IOTA_M=ModelFactory.createDefaultModel();
 				RULES_M=ModelFactory.createDefaultModel();
 				
-			TTT_M.read(TTT);
+			TTT_M.read(url);
+				System.out.println("Going to read prov");
 			PROV_M.read(PROV);
+			System.out.println("Red");
 			IOTA_M.read(IOTA);
 		//	RULES_M.read(RULES);
 		  
-		ALL_OM.addSubModel(TTT_M);
-		ALL_OM.addSubModel(IOTA_M);
-		ALL_OM.addSubModel(PROV_M);
+		ALL_OM.add(TTT_M);
+		ALL_OM.add(IOTA_M);
+		ALL_OM.add(PROV_M);
 	//	ALL_OM.addSubModel(RULES_M);
 		  
-		  
+		System.out.println("End of initialize...");  
 		  
 	}
 //	SPINModuleRegistry.get().init();

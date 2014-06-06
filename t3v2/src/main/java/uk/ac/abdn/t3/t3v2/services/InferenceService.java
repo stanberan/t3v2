@@ -25,11 +25,14 @@ public class InferenceService {
 			SPINModuleRegistry.get().init();
 		//SPINModuleRegistry.get().registerAll(RULES_M, null);
 			Model m=	getAllForDevice(id);
+			System.setProperty("http.proxyHost", "proxy.abdn.ac.uk");
+			  System.setProperty("http.proxyPort", "8080");
 	Model model=ModelFactory.createInfModel(ReasonerRegistry.getOWLReasoner(),ModelController.ALL_OM,m );
 	
 	model.write(System.out,"N3");
-	
-	
+	System.err.println("Printing DIFFERENCE");
+	Model diff=model.difference(m);
+	diff.write(System.out,"N3");
 		
 		
 	}
