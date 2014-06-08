@@ -63,28 +63,19 @@ static Repository TDB=Repository.getSingleton();
      * @throws JsonParseException 
      */
 
-static HashMap<String,String> prefixes=new HashMap<String,String>();
+
 
 static{
 
-	prefixes.put("ttt", "http://t3.abdn.ac.uk/ontologies/t3.owl#");
-	prefixes.put("iota", "http://t3.abdn.ac.uk/ontologies/iota.owl#");
-	prefixes.put("ns", "http://www.w3.org/2006/vcard/ns#");
-	prefixes.put("prov", "http://www.w3.org/ns/prov#");
-	prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
-	prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-	prefixes.put("xsd", "http://www.w3.org/2001/XMLSchema#");
-	prefixes.put("owl","http://www.w3.org/2002/07/owl#");
 ///	prefixes.put("dev", Models.graphNS);
 	
 }
 
 @POST
 @Path("/upload/{deviceid}/prov")
-
-    public String uploadProv(@PathParam("deviceid") String device_id,String body ) throws JsonParseException, JsonMappingException, IOException {
+    public Response uploadProv(@PathParam("deviceid") String device_id,String body ) {
       System.out.println(body);
-
+try{
 	ObjectMapper mapper=new ObjectMapper();
     	mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
    RDFData dat=mapper.readValue(body,RDFData.class);
@@ -96,8 +87,11 @@ static{
    System.out.println("From model object:");
    temp.write(System.out, "TTL");
         TDB.addToGraph(temp, Models.graphNS+device_id+"/prov");
-       
-        return "Provenance Added";
+}
+catch(Exception e){
+	return Response.noContent().entity(e.getMessage()).build();
+}
+        return Response.accepted().entity("Done").build();
         
         
     }
@@ -105,7 +99,7 @@ static{
 @Path("/remove/{devid}/{type}")
 public Response removeDev(@PathParam("type") String type,@PathParam("devid")String id){
 	String graph="";
-	if(type.equals("notype")){
+	if(type.equals("all")){
 		graph=Models.graphNS+id;
 	}
 	else{
@@ -120,6 +114,18 @@ public Response removeDev(@PathParam("type") String type,@PathParam("devid")Stri
 		return Response.status(Response.Status.NO_CONTENT).entity("Not Removed or doesn't exist").build();
 	}
 }
+
+
+@GET
+@Path("/loadmodels")
+@Produces(MediaType.TEXT_PLAIN)
+public String loadModels(){
+Model simbox=ModelFactory.createDefaultModel();
+simbox.read("http://t3.abdn.ac.uk/ontologies/simbbox.rdf",null,"TTL");
+TDB.addToGraph(simbox, Models.graphNS+"simbbox001"+"/data");
+return "Loaded";
+}
+
 @GET
 @Path("{deviceid}/{type}")
 @Produces(MediaType.TEXT_PLAIN)
@@ -168,7 +174,6 @@ StreamingOutput stream = new StreamingOutput() {
  }};
 return Response.ok().entity(stream).build();
 }
-
 
 
 
@@ -237,7 +242,7 @@ if(TDB.getIndependentModel(Models.graphNS+id+"/data")!=null){
 
 +"		 }");
 	
-	query.setNsPrefixes(prefixes);
+	query.setNsPrefixes(ModelController.prefixes);
 	query.setIri("device",Models.graphNS+id);
 	query.setLiteral("name", name);
 	query.setLiteral("description", description);

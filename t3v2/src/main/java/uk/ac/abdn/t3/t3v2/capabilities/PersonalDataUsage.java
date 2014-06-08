@@ -1,16 +1,20 @@
 package uk.ac.abdn.t3.t3v2.capabilities;
 
-public class PersonalDataSharing {
+public class PersonalDataUsage {
+String dev_id;
 	
-	PersonalDataSharing sharing;
-	
-	String dev_id;
 	String producer_uri;
 	String consumer_uri;
 	String data_uri;
 	String data_desc;
 	String purpose;
 	
+	public String getPurpose() {
+		return purpose;
+	}
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
 	public String getDev_id() {
 		return dev_id;
 	}
@@ -41,16 +45,11 @@ public class PersonalDataSharing {
 	public void setData_desc(String data_desc) {
 		this.data_desc = data_desc;
 	}
-	public String getPurpose() {
-		return purpose;
-	}
-	public void setPurpose(String purpose) {
-		this.purpose = purpose;
-	}
 	@Override
 	public String toString() {
-		return "{\"producer_uri\":" + producer_uri
-				+ ", \"consumer_uri\":" + consumer_uri + ", \"data_uri\":" + data_uri
-				+ ", \"data_desc\":" + data_desc + ", \"purpose\":" + purpose + "}";
+		return "PersonalDataUsage [dev_id=" + dev_id + ", producer_uri="
+				+ producer_uri + ", consumer_uri=" + consumer_uri
+				+ ", data_uri=" + data_uri + ", data_desc=" + data_desc + "]";
 	}
+
 }

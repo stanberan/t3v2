@@ -36,9 +36,12 @@ public class Repository {
 		try{
 			System.out.println("SET FOR READ");
 		 dataset.begin(ReadWrite.READ);
-		 if(dataset.containsNamedModel(uri)){
+		 boolean found=dataset.containsNamedModel(uri);
+		 dataset.end();
+		 dataset.begin(ReadWrite.WRITE);
+		 if(found){
 				System.out.println("It contains model"+uri);
-			 dataset.begin(ReadWrite.WRITE);
+		
 			 System.out.println("Found GRAPH for deleting..."+uri);
 			 dataset.removeNamedModel(uri);
 			 dataset.commit();
@@ -50,7 +53,6 @@ public class Repository {
 		}
 		catch(Exception e){
 			 System.out.println("Exception:"+uri);
-			dataset.abort();
 			e.printStackTrace();
 			System.out.println("Issue when removing Graph! Data may be corrupted");
 			return false;
