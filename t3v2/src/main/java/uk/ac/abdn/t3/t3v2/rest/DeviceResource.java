@@ -35,6 +35,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.RDFData;
 import uk.ac.abdn.t3.t3v2.Repository;
+import uk.ac.abdn.t3.t3v2.capabilities.Capability;
 import uk.ac.abdn.t3.t3v2.models.ModelController;
 import uk.ac.abdn.t3.t3v2.pojo.CustomError;
 import uk.ac.abdn.t3.t3v2.pojo.DeviceDescription;
@@ -177,11 +178,28 @@ return "Done";
 public Response getDescription(@Context UriInfo uriInfo,@PathParam("devid") String devid) {
     
 	DeviceDescription desc=queryService.getDeviceDescription(devid);
+	
 	if(desc!=null){
+		System.out.println("Desc not null");
 		return Response.ok().entity(desc.toJson()).build();
 	}
-
+	System.out.println("Desc NULL");
 return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request for description failed").toJson()).build();
+
+}
+@GET
+@Path("{devid}/capabilities/")
+@Produces(MediaType.APPLICATION_JSON)
+public Response getCapabilities(@Context UriInfo uriInfo,@PathParam("devid") String devid) {
+    
+	Capability[] capabilities=queryService.getCapabilitiesStaff(devid);
+	
+	if(capabilities!=null){
+		System.out.println("Found Capabilities");
+		return Response.ok().entity(capabilities).build();
+	}
+	System.out.println("Desc NULL");
+return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request Capabilities failed").toJson()).build();
 
 }
 

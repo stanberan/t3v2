@@ -59,19 +59,7 @@ static Repository TDB=Repository.getSingleton();
 		 return "It was found";
 	  }
 	
-	
-	@GET
-	@Path("load/export")
-	public String load(){
-	
-		Model m=ModelFactory.createDefaultModel();
-		m.read("http://t3.abdn.ac.uk/ontologies/export.rdf");
-	TDB.addToGraph(m, QueryHandler.busgraph);
-		
-		TDB.getIndependentModel(QueryHandler.busgraph).write(System.out,"TURTLE");
-		
-		return "Done";
-	}
+
 	
 	
 	@GET

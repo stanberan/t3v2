@@ -37,16 +37,18 @@ public class Repository {
 	 }
 	 public void clearRepo(){
 		 try{
+				dataset.begin(ReadWrite.WRITE);
 		 dataset.getContext().set(TDB.symUnionDefaultGraph, true) ;
 		Model defaultModel=dataset.getDefaultModel();
-		dataset.begin(ReadWrite.WRITE);
+	
 		defaultModel.removeAll();
 		dataset.commit();
 		 }
 		 catch(Exception e){
 			 dataset.abort();
 		 }
-		dataset.end();
+		 finally{
+		dataset.end();}
 	 }
 	 public boolean removeNamedGraph(String uri){
 		try{
@@ -84,7 +86,7 @@ public class Repository {
 	 public void preloadData(){
 			Model m=ModelFactory.createDefaultModel();
 			m.read("http://t3.abdn.ac.uk/ontologies/simbbox001.ttl",null,"TTL");
-			registerDeviceData(ModelController.TTT_GRAPH+"simbbox001", m);
+			registerDeviceData(ModelController.TTT_GRAPH+"simbbox001"+"/data", m);
 			
 		}
 	 

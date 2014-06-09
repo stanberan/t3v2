@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import uk.ac.abdn.t3.t3v2.DB;
 import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.pojo.CustomError;
+import uk.ac.abdn.t3.t3v2.pojo.Device;
 import uk.ac.abdn.t3.t3v2.pojo.User;
 import uk.ac.abdn.t3.t3v2.services.AnalyseTimer;
 @Path("user")
@@ -34,7 +35,26 @@ public class UserResource {
 	   return Response.ok(new CustomError("registerUser","User not updated").toJson()).build();
 		
 	}
+	
+	
+	
+
+	@GET
+	@Path("/register/device/{userid}/{deviceid}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String gcmid){
+		
+		
+	   boolean updated=db.associateDevAndUser(gcmid,userid );
+	  
+	   if(updated){
+		   return Response.ok().entity("Associated").build();
+	   }
+	   return Response.ok(new CustomError("registerUser","User not updated").toJson()).build();
+		
+	}
 }
+
 		
 		
 	

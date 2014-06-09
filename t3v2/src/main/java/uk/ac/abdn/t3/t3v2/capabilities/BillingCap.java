@@ -1,6 +1,6 @@
 package uk.ac.abdn.t3.t3v2.capabilities;
 
-public class BillingCap {
+public class BillingCap implements Capability {
 	String dev_id;
 	String producer_uri;   //AGENT who owns billing server!
 	String data_uri;

@@ -5,8 +5,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import uk.ac.abdn.t3.t3v2.Repository;
+import uk.ac.abdn.t3.t3v2.models.ModelController;
 import uk.ac.abdn.t3.t3v2.services.AnalyseTimer;
 @Path("control")
 public class ControlResource {
@@ -28,17 +30,25 @@ public class ControlResource {
 	
 
 	@GET
-	@Path("/repository/clear")
+	@Path("/repository/remove/{id}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String repoclear(){
-	TDB.preloadData();
-	return"TDB Cleared...";
+	public Response repoclear(@PathParam("id")String id){
+		String graph=ModelController.TTT_GRAPH+id+"/data";
+		String graph1=ModelController.TTT_GRAPH+id+"/prov";
+		boolean removed=TDB.removeNamedGraph(graph);
+		boolean removedprov=TDB.removeNamedGraph(graph1);
+		if(removed){
+		return Response.status(Response.Status.OK).entity("Removed"+graph+"and"+graph1).build();
+		}
+		else{
+			return Response.status(Response.Status.NO_CONTENT).entity("Not Removed or doesn't exist:"+graph).build();
+		}
 	}
 	@GET
 	@Path("/repository/restart")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String reporestart(){
-	TDB.preloadData();
+	TDB.restart();
 	return"TDB Restarted...";
 	}
 

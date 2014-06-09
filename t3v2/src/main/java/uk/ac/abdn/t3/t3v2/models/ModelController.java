@@ -71,7 +71,7 @@ public static Model test(){
 		   System.getProperties().put("proxyPort",8080);
 		    if(TTT_M==null){
 		    	TTT_M=ModelFactory.createOntologyModel();
-		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2.rdf",null,"TTL"); 
+		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2.rdf",null,"RDF/XML"); 
 		    }
 		    
 	 System.out.println("_____________BASE___________________");

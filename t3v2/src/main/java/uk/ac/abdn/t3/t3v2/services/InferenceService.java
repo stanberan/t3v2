@@ -52,7 +52,7 @@ public class InferenceService {
 	//OntModel provenanceModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, "http://www.w3.org/ns/prov");
 
 
-	
+	/*
 	
 	public OntModel inferCapabilities(String devid, String userid){
 		  OntModel tttOnt=ModelController.getT3Ont();
@@ -76,7 +76,7 @@ public class InferenceService {
 		//construct Object and compare. 
 		return instanceModel;
 		
-	}
+	}*/
 	
 	
 	//infer plus comopare
@@ -94,14 +94,14 @@ public class InferenceService {
 	
 	public OntModel getDeviceOntModel(Model baseModel){
 		OntModel TTT=ModelController.getT3Ont();
-		System.out.println("BASE MODEL BEFORE RDFS REASONER");
-		baseModel.write(System.out,"TTL");
-		InfModel infDevModel=ModelFactory.createInfModel(ReasonerRegistry.getRDFSReasoner(), TTT, baseModel);
-		System.out.println("BASE MODEL AFTER RDFS REASONER");
-		infDevModel.write(System.out,"TTL");
 		
-		OntModel ontDeviceModel=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, infDevModel);
-		
+		OntModel ontDeviceModel=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, baseModel);
+		System.out.println("BEFORE");
+		ontDeviceModel.write(System.out, "TTL");
+		ontDeviceModel.addSubModel(TTT);
+		System.out.println("AFTER");
+		ontDeviceModel.write(System.out, "TTL");
+	
 		return ontDeviceModel;
 				
 
@@ -340,16 +340,16 @@ public class InferenceService {
 		    	 
 		    	 ParameterizedSparqlString query=new ParameterizedSparqlString();
 				 	query.setCommandText( ""
-				 				+ "SELECT ?iotdev ?device_name, ?manufacturer, ?owner, ?securityDescription,?deviceDescription, ?logo ?typeDescription "
+				 				+ "SELECT ?iotdev ?device_name ?manufacturer ?owner ?securityDescription ?deviceDescription ?logo ?typeDescription "
 				 				+ "WHERE {"
-				 				+ "?iotdev a iota:Device .  "
-				 				+ "?iotdev foaf:name ?device_name ."
-				 		    	+ "?iotdev ttt:manufacturer ?manufacturer."
-				 				+ " ?iotdev ttt:owner ?owner."
-				 				+ " ?iotdev ttt:securityDescription ?securityDescription ."
-				 				+ " ?iotdev ttt:deviceDescription ?deviceDescription ."
-				 				+ " ?iotdev ttt:typeDescription ?typeDescription ."
-				 				+ " ?iotdev ttt:pictureURL ?logo ."
+				 				+ "?iotdev a ttt:TelematicsDevice .  "
+				 				+ "?iotdev foaf:name ?device_name . "
+				 		    	+ "?iotdev ttt:manufacturer ?manufacturer. "
+				 				+ " ?iotdev ttt:owner ?owner. "
+				 				+ " ?iotdev ttt:securityDescription ?securityDescription . "
+				 				+ " ?iotdev ttt:deviceDescription ?deviceDescription . "
+				 				+ " ?iotdev ttt:typeDescription ?typeDescription . "
+				 				+ " ?iotdev ttt:pictureURL ?logo . "
 				 				+ "   }");
 
 				 		 query.setNsPrefixes(ModelController.prefixes);
@@ -358,10 +358,12 @@ public class InferenceService {
 		    	 
 				 	ResultSet rs = qExec.execSelect() ;
 		 		     try {
+		 		    	 System.out.println("Has NEXT?...");
 		 		        if(rs.hasNext()){
+		 		        	 System.out.print("true");
 		 		        	DeviceDescription d=new DeviceDescription();
 		 		        	QuerySolution sol=rs.next();
-		 		       d.setDev_uri("iotdev");
+		 		       d.setDev_uri(sol.get("iotdev").asResource().getURI());
 		 		       d.setDeviceDescription(sol.get("deviceDescription").toString());
 		 		       d.setSecurityDescription(sol.get("securityDescription").toString());
 		 		       d.setTypeDescription(sol.get("typeDescription").toString());
@@ -369,8 +371,10 @@ public class InferenceService {
 		 		       d.setManufacturer(sol.get("manufacturer").asResource().getURI());
 		 		      d.setOwner(sol.get("owner").asResource().getURI());
 		 		      d.setName(sol.get("device_name").toString());
+		 		      System.out.println(d.toJson());
 		 		      return d;
 		 		        }
+		 		       System.out.print("false");
 		 		       }
 		 		        catch(Exception e){
 		 		        	e.printStackTrace();
