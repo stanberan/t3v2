@@ -5,6 +5,15 @@ public class NotificationService {
 	
 	
 	
+	
+	public static  boolean notifyUser(String gcm,String message){
+		
+		
+		return false;
+		
+	}
+	
+	
 
 }
 //for each device

@@ -21,9 +21,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -34,7 +36,10 @@ import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.RDFData;
 import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.models.ModelController;
+import uk.ac.abdn.t3.t3v2.pojo.CustomError;
+import uk.ac.abdn.t3.t3v2.pojo.DeviceDescription;
 import uk.ac.abdn.t3.t3v2.services.InferenceService;
+import uk.ac.abdn.t3.t3v2.services.QueryService;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.ParameterizedSparqlString;
@@ -51,8 +56,9 @@ import com.hp.hpl.jena.update.UpdateRequest;
  * Root resource (exposed at "myresource" path)
  */
 @Path("device")
-public class MyResource {
+public class DeviceResource {
 static Repository TDB=Repository.getSingleton();
+static QueryService queryService=QueryService.getSingleton();
     /**
      * Method handling HTTP GET requests. The returned object will be sent
      * to the client as "text/plain" media type.
@@ -100,31 +106,22 @@ catch(Exception e){
 public Response removeDev(@PathParam("type") String type,@PathParam("devid")String id){
 	String graph="";
 	if(type.equals("all")){
-		graph=Models.graphNS+id;
+		graph=ModelController.TTT_GRAPH+id;
 	}
 	else{
-		graph=Models.graphNS+id+"/"+type;
+		graph=ModelController.TTT_GRAPH+id+"/"+type;
 	}
 	System.out.println("Trying to remove ..."+graph);
 	boolean removed=TDB.removeNamedGraph(graph);
 	if(removed){
-	return Response.status(Response.Status.OK).entity("Removed").build();
+	return Response.status(Response.Status.OK).entity("Removed"+graph).build();
 	}
 	else{
-		return Response.status(Response.Status.NO_CONTENT).entity("Not Removed or doesn't exist").build();
+		return Response.status(Response.Status.NO_CONTENT).entity("Not Removed or doesn't exist:"+graph).build();
 	}
 }
 
 
-@GET
-@Path("/loadmodels")
-@Produces(MediaType.TEXT_PLAIN)
-public String loadModels(){
-Model simbox=ModelFactory.createDefaultModel();
-simbox.read("http://t3.abdn.ac.uk/ontologies/simbbox.rdf",null,"TTL");
-TDB.addToGraph(simbox, Models.graphNS+"simbbox001"+"/data");
-return "Loaded";
-}
 
 @GET
 @Path("{deviceid}/{type}")
@@ -154,25 +151,38 @@ public Response getGraph(@PathParam("deviceid") String id,@PathParam("type") Str
 }
 
 @GET
-@Path("infer/{deviceid}")
+@Path("infer/{type}")
 @Produces(MediaType.TEXT_PLAIN)
-public Response infer(@PathParam("deviceid") String id) {
+public String infer(@PathParam("type") String type) {
+InferenceService infService=InferenceService.getService();
 
-//InferenceService infService=new InferenceService();
-final Model m=ModelController.test();
- //infService.inferCapabilities(id);
+//infService.inferCapabilities(type);
+return "Done";
 
-	
-	
-StreamingOutput stream = new StreamingOutput() {
- @Override
- public void write(OutputStream os) throws IOException,
- WebApplicationException {
-   Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-   m.write(writer,"N3");
-   writer.close();
- }};
-return Response.ok().entity(stream).build();
+}
+@GET
+@Path("compare/{type}")
+@Produces(MediaType.TEXT_PLAIN)
+public String get(@PathParam("type") String type) {
+InferenceService infService=InferenceService.getService();
+
+//infService.compareCapabilities("simbbox001", "user");
+return "Done";
+
+}
+
+@GET
+@Path("{devid}/description/")
+@Produces(MediaType.TEXT_PLAIN)
+public Response getDescription(@Context UriInfo uriInfo,@PathParam("devid") String devid) {
+    
+	DeviceDescription desc=queryService.getDeviceDescription(devid);
+	if(desc!=null){
+		return Response.ok().entity(desc.toJson()).build();
+	}
+
+return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request for description failed").toJson()).build();
+
 }
 
 
@@ -202,7 +212,7 @@ return Response.ok().entity(stream).build();
     		) throws JsonParseException, JsonMappingException, IOException {
 System.out.println("Manweb:"+man_web);
 	//TODO : Addresss ....
-if(TDB.getIndependentModel(Models.graphNS+id+"/data")!=null){
+if(TDB.getIndependentModel(ModelController.TTT_GRAPH+id+"/data")!=null){
 	
 	return Response.status(Response.Status.FOUND).entity("This id is already taken!Try again").build();
 }
@@ -243,7 +253,7 @@ if(TDB.getIndependentModel(Models.graphNS+id+"/data")!=null){
 +"		 }");
 	
 	query.setNsPrefixes(ModelController.prefixes);
-	query.setIri("device",Models.graphNS+id);
+	query.setIri("device",ModelController.TTT_GRAPH+id);
 	query.setLiteral("name", name);
 	query.setLiteral("description", description);
 	query.setLiteral("secdescription", sec_description);
@@ -276,7 +286,8 @@ if(TDB.getIndependentModel(Models.graphNS+id+"/data")!=null){
 	temp.write(System.out,"N3");
 	
 	//registerDevice
-	TDB.addToGraph(temp,Models.graphNS+id+"/data");
+	TDB.registerDeviceData(ModelController.TTT_GRAPH+id+"/data",temp);
+	
 	
 	
 	

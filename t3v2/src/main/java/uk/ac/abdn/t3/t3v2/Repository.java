@@ -1,11 +1,14 @@
 package uk.ac.abdn.t3.t3v2;
 
+import uk.ac.abdn.t3.t3v2.models.ModelController;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.update.UpdateAction;
 
@@ -32,6 +35,19 @@ public class Repository {
 		 dataset.close();
 		 singleton=new Repository();
 	 }
+	 public void clearRepo(){
+		 try{
+		 dataset.getContext().set(TDB.symUnionDefaultGraph, true) ;
+		Model defaultModel=dataset.getDefaultModel();
+		dataset.begin(ReadWrite.WRITE);
+		defaultModel.removeAll();
+		dataset.commit();
+		 }
+		 catch(Exception e){
+			 dataset.abort();
+		 }
+		dataset.end();
+	 }
 	 public boolean removeNamedGraph(String uri){
 		try{
 			System.out.println("SET FOR READ");
@@ -49,6 +65,7 @@ public class Repository {
 			 return true;
 		 }
 		 System.out.println("Graph:"+uri +" was not found.");
+		 dataset.abort();
 		 return false;
 		}
 		catch(Exception e){
@@ -63,6 +80,13 @@ public class Repository {
 		 System.out.println("Finally:End");
 		}
 	 }
+	 
+	 public void preloadData(){
+			Model m=ModelFactory.createDefaultModel();
+			m.read("http://t3.abdn.ac.uk/ontologies/simbbox001.ttl",null,"TTL");
+			registerDeviceData(ModelController.TTT_GRAPH+"simbbox001", m);
+			
+		}
 	 
 	 public boolean addToGraph(Model m,String graph){
 		try{
@@ -85,7 +109,11 @@ public class Repository {
 	 
 }
 	 
-	 
+	 public boolean registerDeviceData(String graph,Model data){
+			return addToGraph(data,graph);
+			
+			
+		}
 	
 	 
 	 
@@ -97,6 +125,7 @@ public class Repository {
 		 if(dataset.containsNamedModel(graph)){
 			 System.out.println("Found GRAPH creating temp Model.."+graph);
 			m= dataset.getNamedModel(graph).difference(ModelFactory.createDefaultModel());
+			m.setNsPrefixes(ModelController.prefixes);
 		 }
 		return m;
 		}

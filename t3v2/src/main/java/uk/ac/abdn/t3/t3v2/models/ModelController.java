@@ -11,6 +11,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.tdb.TDB;
 
 public class ModelController {
 	public static HashMap<String,String> prefixes=new HashMap<String,String>();
@@ -38,6 +39,7 @@ static{
 	final static String TTT_NS="http://t3.abdn.ac.uk/ontologies/t3.owl#";
 	final static String IOTA_NS="http://t3.abdn.ac.uk/ontologies/iota.owl#";
 	final static String PROV_NS="http://www.w3.org/ns/prov#";
+	public final static String TTT_GRAPH="http://t3.abdn.ac.uk/t3v2/1/device/";
 	
 	public static OntModel TTT_M=null;
 	static Model PROV_M;
@@ -45,10 +47,13 @@ static{
 	static Model RULES_M;
 	
 	public static Model ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
-	//static Repository TDB=Repository.getSingleton();
+static Repository TDB=Repository.getSingleton();
 	
 	//OntModel provenanceModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, "http://www.w3.org/ns/prov");
 
+	
+	
+	
 public static Model test(){
 
 	System.out.println("Testing");
@@ -78,6 +83,8 @@ public static Model test(){
 	 
 		  
 	}
+	
+	
 //	SPINModuleRegistry.get().init();
 //	SPINModuleRegistry.get().registerAll(RULES_M, null);
 public static void main(String[] args){
