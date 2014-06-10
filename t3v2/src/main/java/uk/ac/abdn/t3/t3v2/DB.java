@@ -89,6 +89,7 @@ public boolean deviceExist(Device u){
 	}
 		catch(Exception e){
 			e.printStackTrace();
+			//new
 			return false;
 		}
 }

@@ -38,7 +38,7 @@ public class QueryService {
 	}
 	
 	
-	public Capability[] getCapabilitiesStaff(String devid){
+	public ArrayList<Capability> getCapabilitiesStaff(String devid){
 		infService=InferenceService.getService();
 		
 		OntModel mainDeviceModel=infService.getDeviceOntModel(devid);
@@ -63,7 +63,7 @@ public class QueryService {
 		capabilities.addAll(generation);
 		capabilities.addAll(billing);
 		
-		return (Capability[])capabilities.toArray();
+		return capabilities;
 		
 	}
 	

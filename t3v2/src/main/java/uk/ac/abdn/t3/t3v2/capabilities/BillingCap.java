@@ -1,5 +1,8 @@
 package uk.ac.abdn.t3.t3v2.capabilities;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+
 public class BillingCap implements Capability {
 	String dev_id;
 	String producer_uri;   //AGENT who owns billing server!
@@ -35,6 +38,17 @@ public class BillingCap implements Capability {
 	public String toString() {
 		return "BillingCap [provider_uri=" + producer_uri + ", data_uri="
 				+ data_uri + ", data_desc=" + data_desc + "]";
+	}
+
+	@Override
+	public String toJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationConfig.Feature.WRITE_NULL_PROPERTIES, false);
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+		}
+		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 	}
 	
 	

@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.security.acl.Owner;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -31,6 +32,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.RDFData;
@@ -192,11 +195,17 @@ return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request fo
 @Produces(MediaType.APPLICATION_JSON)
 public Response getCapabilities(@Context UriInfo uriInfo,@PathParam("devid") String devid) {
     
-	Capability[] capabilities=queryService.getCapabilitiesStaff(devid);
+	ArrayList<Capability>capabilities=queryService.getCapabilitiesStaff(devid);
+	Capability[] capabilityArray= new Capability[capabilities.size()];
+	capabilityArray=capabilities.toArray(capabilityArray);
+	JSONArray jsonArray=new JSONArray();
+	for(Capability c:capabilities){
+	jsonArray.put(c.toJson());
+	}
 	
 	if(capabilities!=null){
 		System.out.println("Found Capabilities");
-		return Response.ok().entity(capabilities).build();
+		return Response.ok().entity(jsonArray.toString()).build();
 	}
 	System.out.println("Desc NULL");
 return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request Capabilities failed").toJson()).build();
