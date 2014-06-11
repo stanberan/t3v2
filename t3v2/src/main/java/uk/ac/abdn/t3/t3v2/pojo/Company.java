@@ -1,5 +1,8 @@
 package uk.ac.abdn.t3.t3v2.pojo;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+
 public class Company {
 String uri;
 String name;
@@ -43,6 +46,16 @@ public String getEmail() {
 public void setEmail(String email) {
 	this.email = email;
 }
+public String toJson(){
+	ObjectMapper mapper = new ObjectMapper();
+	mapper.configure(SerializationConfig.Feature.WRITE_NULL_PROPERTIES, false);
+	try {
+		return mapper.writeValueAsString(this);
+	} catch (Exception e) {
+	}
+	return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 
+	
+}
 
 }

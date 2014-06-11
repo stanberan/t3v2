@@ -212,7 +212,13 @@ PersonalData c=InferenceService.getService().getPersonalData(uri, InferenceServi
 @Produces(MediaType.APPLICATION_JSON)
 public Response getCompanies(@PathParam("devid") String devid) {
 ArrayList<Company> companies=InferenceService.getService().getCompanies(InferenceService.getService().getDeviceOntModel(devid));  
-		return Response.ok().entity(companies).build();
+JSONArray jsonArray=new JSONArray();
+for(Company c: companies){
+jsonArray.put(new JSONObject(c.toJson()));
+}	
+
+
+return Response.ok().entity(jsonArray.toString()).build();
 	}
 @GET
 @Path("{devid}/personaldata")
