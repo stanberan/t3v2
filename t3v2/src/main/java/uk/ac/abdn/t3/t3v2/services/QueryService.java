@@ -38,15 +38,14 @@ public class QueryService {
 	}
 	
 	
-	public ArrayList<Capability> getCapabilitiesStaff(String devid){
+	public ArrayList<Capability> getCapabilitiesStaff(String devid,Model currentInfferedCapabilities){
 		infService=InferenceService.getService();
 		
 		OntModel mainDeviceModel=infService.getDeviceOntModel(devid);
-		Model currentInferredCapabilities=ModelFactory.createDefaultModel();
-		mainDeviceModel.addSubModel(currentInferredCapabilities);
-		infService.inferCapabilities(mainDeviceModel, currentInferredCapabilities);
+		mainDeviceModel.addSubModel(currentInfferedCapabilities);
+		infService.inferCapabilities(mainDeviceModel, currentInfferedCapabilities);
 		System.out.println("CURRENT INFERRED CAPABILITIES FROM LOOP");
-		currentInferredCapabilities.write(System.out, "TTL");
+		currentInfferedCapabilities.write(System.out, "TTL");
 		
 		ArrayList<PersonalDataGeneration> generation= infService.getPersonalDataCap(mainDeviceModel);
 		ArrayList<PersonalDataCollection> collection= infService.getPersonalDataCollection(mainDeviceModel);

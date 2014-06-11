@@ -40,8 +40,10 @@ import uk.ac.abdn.t3.t3v2.RDFData;
 import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.capabilities.Capability;
 import uk.ac.abdn.t3.t3v2.models.ModelController;
+import uk.ac.abdn.t3.t3v2.pojo.Company;
 import uk.ac.abdn.t3.t3v2.pojo.CustomError;
 import uk.ac.abdn.t3.t3v2.pojo.DeviceDescription;
+import uk.ac.abdn.t3.t3v2.pojo.PersonalData;
 import uk.ac.abdn.t3.t3v2.services.InferenceService;
 import uk.ac.abdn.t3.t3v2.services.QueryService;
 
@@ -191,11 +193,44 @@ return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request fo
 
 }
 @GET
-@Path("{devid}/capabilities/")
+@Path("{devid}/company/{uri}")
+@Produces(MediaType.TEXT_PLAIN)
+public Response getCompanyUri(@PathParam("uri") String uri,@PathParam("devid") String devid) {
+Company c=InferenceService.getService().getCompany(uri, InferenceService.getService().getDeviceOntModel(devid));  
+		return Response.ok().entity(c).build();
+	}
+
+@GET
+@Path("{devid}/personaldata/{uri}")
+@Produces(MediaType.TEXT_PLAIN)
+public Response getPDC(@PathParam("uri") String uri,@PathParam("devid") String devid) {
+PersonalData c=InferenceService.getService().getPersonalData(uri, InferenceService.getService().getDeviceOntModel(devid));  
+		return Response.ok().entity(c).build();
+	}
+@GET
+@Path("{devid}/companies")
+@Produces(MediaType.TEXT_PLAIN)
+public Response getCompanies(@PathParam("devid") String devid) {
+ArrayList<Company> companies=InferenceService.getService().getCompanies(InferenceService.getService().getDeviceOntModel(devid));  
+		return Response.ok().entity(companies).build();
+	}
+@GET
+@Path("{devid}/personaldata")
+@Produces(MediaType.TEXT_PLAIN)
+public Response getPDCall(@PathParam("devid") String devid) {
+ArrayList<PersonalData> companies=InferenceService.getService().getPersonalData(InferenceService.getService().getDeviceOntModel(devid));  
+		return Response.ok().entity(companies).build();
+	}
+@GET
+@Path("{devid}/capabilities/{uid}")
 @Produces(MediaType.APPLICATION_JSON)
-public Response getCapabilities(@Context UriInfo uriInfo,@PathParam("devid") String devid) {
-    
-	ArrayList<Capability>capabilities=queryService.getCapabilitiesStaff(devid);
+public Response getCapabilities(@Context UriInfo uriInfo,@PathParam("uid") String uid,@PathParam("devid") String devid) {
+	Model currentCap=ModelFactory.createDefaultModel();	
+	ArrayList<Capability>capabilities=queryService.getCapabilitiesStaff(devid,currentCap);
+	InferenceService.getService().changeCapabilities(currentCap, ModelController.TTT_GRAPH+devid+uid+"/temp");
+boolean isnew=	InferenceService.getService().compareCapabilities(ModelController.TTT_GRAPH+devid+uid+"/accepted", currentCap);
+
+
 	Capability[] capabilityArray= new Capability[capabilities.size()];
 	capabilityArray=capabilities.toArray(capabilityArray);
 	JSONArray jsonArray=new JSONArray();
@@ -204,7 +239,9 @@ public Response getCapabilities(@Context UriInfo uriInfo,@PathParam("devid") Str
 	}
 	
 	if(capabilities!=null){
-		System.out.println("Found Capabilities");
+		if(!isnew){
+			return Response.noContent().entity(jsonArray.toString()).build();
+		}
 		return Response.ok().entity(jsonArray.toString()).build();
 	}
 	System.out.println("Desc NULL");

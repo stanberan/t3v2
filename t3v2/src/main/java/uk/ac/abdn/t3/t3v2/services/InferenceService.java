@@ -29,7 +29,9 @@ import uk.ac.abdn.t3.t3v2.capabilities.PersonalDataGeneration;
 import uk.ac.abdn.t3.t3v2.capabilities.PersonalDataSharing;
 import uk.ac.abdn.t3.t3v2.capabilities.PersonalDataUsage;
 import uk.ac.abdn.t3.t3v2.models.ModelController;
+import uk.ac.abdn.t3.t3v2.pojo.Company;
 import uk.ac.abdn.t3.t3v2.pojo.DeviceDescription;
+import uk.ac.abdn.t3.t3v2.pojo.PersonalData;
 
 public class InferenceService {
 
@@ -82,8 +84,8 @@ public class InferenceService {
 	//infer plus comopare
 	public OntModel getDeviceOntModel(String devid){
 	
-		String deviceProvenanceGraph=Models.graphNS+devid+"/prov";
-		String deviceDescriptionGraph=Models.graphNS+devid+"/data";
+		String deviceProvenanceGraph=ModelController.TTT_GRAPH+devid+"/prov";
+		String deviceDescriptionGraph=ModelController.TTT_GRAPH+devid+"/data";
 		
 		Model baseModel=getBaseDeviceModel(deviceProvenanceGraph,deviceDescriptionGraph);
 		OntModel deviceOntModel=getDeviceOntModel(baseModel);
@@ -172,12 +174,213 @@ public class InferenceService {
 		return true;
 		 
 	}
+	public ArrayList<PersonalData> filterPD(ArrayList<PersonalData> source){
+		ArrayList<PersonalData> data=new ArrayList<PersonalData>();
+		for(PersonalData d: source){
+			if(!data.contains(d)){
+				data.add(d);
+			}			
+		}
+		return data;	
 		
+	}
+	public ArrayList<PersonalDataCollection> filterPDC(ArrayList<PersonalDataCollection> source){
+		ArrayList<PersonalDataCollection> data=new ArrayList<PersonalDataCollection>();
+		for(PersonalDataCollection d: source){
+			if(!data.contains(d)){
+				data.add(d);
+			}			
+		}
+		return data;	
 		
+	}
+	public ArrayList<BillingCap> filterBil(ArrayList<BillingCap> source){
+		ArrayList<BillingCap> data=new ArrayList<BillingCap>();
+		for(BillingCap d: source){
+			if(!data.contains(d)){
+				data.add(d);
+			}			
+		}
+		return data;	
 		
+	}
+	public ArrayList<PersonalDataGeneration> filterPDG(ArrayList<PersonalDataGeneration> source){
+		ArrayList<PersonalDataGeneration> data=new ArrayList<PersonalDataGeneration>();
+		for(PersonalDataGeneration d: source){
+			if(!data.contains(d)){
+				data.add(d);
+			}			
+		}
+		return data;	
+		
+	}
+	public ArrayList<PersonalDataSharing> filterPDSh(ArrayList<PersonalDataSharing> source){
+		ArrayList<PersonalDataSharing> data=new ArrayList<PersonalDataSharing>();
+		for(PersonalDataSharing d: source){
+			if(!data.contains(d)){
+				data.add(d);
+			}			
+		}
+		return data;	
+		
+	}
+	public ArrayList<PersonalDataUsage> filterPDU(ArrayList<PersonalDataUsage> source){
+		ArrayList<PersonalDataUsage> data=new ArrayList<PersonalDataUsage>();
+		for(PersonalDataUsage d: source){
+			if(!data.contains(d)){
+				data.add(d);
+			}			
+		}
+		return data;	
+		
+	}
 	
 	
+
+	public PersonalData getPersonalData(String uri,Model basedevm){
+	//	ArrayList<PersonalData>data =new ArrayList<PersonalData>();
+	 	PersonalData d=new PersonalData();
+				ParameterizedSparqlString query=new ParameterizedSparqlString();
+				query.setCommandText( ""
+							+ "SELECT ?uri ?desc "
+							+ "WHERE {"
+							+ "?uri a ttt:PersonalData . "
+							+ "?uri ttt:description ?desc . "				
+							+ "}");
+					
+					 query.setNsPrefixes(ModelController.prefixes);
+					query.setIri("uri", uri);
+				QueryExecution qExec=QueryExecutionFactory.create(query.asQuery(),basedevm);
+				ResultSet rs=qExec.execSelect();
+				try {
+			        if(rs.hasNext()){
+			  
+			        	QuerySolution q=rs.next();
+			        	d.setDescription(q.getLiteral("desc").getString());
+			        	d.setUri(q.getResource("uri").getURI());
+			        
+			      
+			        }
+			        return d; }
+			        catch(Exception e){
+			        	e.printStackTrace();
+			        	return null;
+			        }		     
+			      finally { qExec.close(); }
+				
+			}	
+	public ArrayList<PersonalData> getPersonalData(Model basedevm){
+		ArrayList<PersonalData>data =new ArrayList<PersonalData>();
+				ParameterizedSparqlString query=new ParameterizedSparqlString();
+				query.setCommandText( ""
+							+ "SELECT ?uri ?desc "
+							+ "WHERE {"
+							+ "?uri a ttt:PersonalData . "
+							+ "?uri ttt:description ?desc . "				
+							+ "}");
+					
+					 query.setNsPrefixes(ModelController.prefixes);
+				//	query.setIri("uri", uri);
+				QueryExecution qExec=QueryExecutionFactory.create(query.asQuery(),basedevm);
+				ResultSet rs=qExec.execSelect();
+				try {
+			        while(rs.hasNext()){
+			        	PersonalData d=new PersonalData();
+			        	QuerySolution q=rs.next();
+			        	d.setDescription(q.getLiteral("desc").getString());
+			        	d.setUri(q.getResource("uri").getURI());
+			        
+			        	
+			        	data.add(d);
+			      
+			        }
+			        
+			        return filterPD(data); }
+			        catch(Exception e){
+			        	e.printStackTrace();
+			        	return null;
+			        }		     
+			      finally { qExec.close(); }
+				
+			}	
+
+	public ArrayList<Company> getCompanies(Model basedevm){
+ArrayList<Company>companies =new ArrayList<Company>();
+		ParameterizedSparqlString query=new ParameterizedSparqlString();
+		query.setCommandText( ""
+					+ "SELECT ?uri ?logo ?name ?tel ?url ?email ?address "
+					+ "WHERE {"
+					+ "?uri a foaf:Organization . "
+					+ "?uri foaf:name ?name . "
+					+ "	?uri ns:hasAddress ?address . "
+					+ " ?uri foaf:phone ?tel ."
+					+ " ?uri foaf:homepage ?url ."
+					+ " ?uri foaf:mbox ?email ."				
+					+ "}");
+			
+			 query.setNsPrefixes(ModelController.prefixes);
+			
+		QueryExecution qExec=QueryExecutionFactory.create(query.asQuery(),basedevm);
+		ResultSet rs=qExec.execSelect();
+		try {
+	        while(rs.hasNext()){
+	        	Company c=new Company();
+	        	QuerySolution q=rs.next();
+	        	c.setAddress(q.getLiteral("address").getString());
+	        	c.setEmail(q.getResource("email").getURI());
+	        	c.setTel(q.getLiteral("tel").getString());
+	        	c.setLogo(q.getResource("logo").getURI());
+	        	c.setUri(q.getResource("uri").getURI());
+	        	
+	        	companies.add(c);
+	      
+	        }
+	        return companies; }
+	        catch(Exception e){
+	        	e.printStackTrace();
+	        	return null;
+	        }		     
+	      finally { qExec.close(); }
+		
+	}	
 	
+	
+	public Company getCompany(String uri, Model basedevm){
+	Company c=new Company();
+		ParameterizedSparqlString query=new ParameterizedSparqlString();
+		query.setCommandText( ""
+					+ "SELECT ?logo ?name ?tel ?url ?email ?address "
+					+ "WHERE {"
+					+ "?uri a foaf:Organization . "
+					+ "?uri foaf:name ?name . "
+					+ "	?uri ns:hasAddress ?address . "
+					+ " ?uri foaf:phone ?tel ."
+					+ " ?uri foaf:homepage ?url ."
+					+ " ?uri foaf:mbox ?email ."				
+					+ "}");
+			
+			 query.setNsPrefixes(ModelController.prefixes);
+			 query.setIri("uri", uri);
+		QueryExecution qExec=QueryExecutionFactory.create(query.asQuery(),basedevm);
+		ResultSet rs=qExec.execSelect();
+		try {
+	        if(rs.hasNext()){
+	        	QuerySolution q=rs.next();
+	        	c.setAddress(q.getLiteral("address").getString());
+	        	c.setEmail(q.getResource("email").getURI());
+	        	c.setTel(q.getLiteral("tel").getString());
+	        	c.setLogo(q.getResource("logo").getURI());
+	        	c.setUri(uri);
+	      
+	        }
+	        return c; }
+	        catch(Exception e){
+	        	e.printStackTrace();
+	        	return null;
+	        }		     
+	      finally { qExec.close(); }
+		
+	}
 
 	public ArrayList<PersonalDataGeneration> getPersonalDataCap(OntModel instance){
 		ArrayList<PersonalDataGeneration> pdgs=new ArrayList<PersonalDataGeneration>();
@@ -206,7 +409,7 @@ public class InferenceService {
 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());	 
 		        	pdgs.add(pdg);
 		        }
-		        return pdgs; }
+		        return filterPDG(pdgs); }
 		        catch(Exception e){
 		        	e.printStackTrace();
 		        	return null;
@@ -250,7 +453,7 @@ public class InferenceService {
 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
 		        	pdgs.add(pdg);
 		        }
-		        return pdgs; }
+		        return filterPDSh(pdgs); }
 		        catch(Exception e){
 		        	e.printStackTrace();
 		        	return null;
@@ -287,7 +490,7 @@ public class InferenceService {
 		 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
 		 		        	pdgs.add(pdg);
 		 		        }
-		 		        return pdgs; }
+		 		        return filterPDC(pdgs); }
 		 		        catch(Exception e){
 		 		        	e.printStackTrace();
 		 		        	return null;
@@ -308,7 +511,7 @@ public class InferenceService {
 			 		    	+ "	?data_uri ttt:description ?data_desc . "
 			 				+ " ?pdc ttt:provider ?provider_uri ."
 			 				+ " ?pdc ttt:consumer ?consumer_uri ."
-			 				+ "  ttt:PersonalDataCollection rdfs:label ?t3desc ."
+			 				+ "  ttt:BillingCap rdfs:label ?t3desc ."
 			 				+ "   }");
 
 			 		 query.setNsPrefixes(ModelController.prefixes);
@@ -326,7 +529,7 @@ public class InferenceService {
 			 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
 			 		        	pdgs.add(pdg);
 			 		        }
-			 		        return pdgs; }
+			 		        return filterBil(pdgs); }
 			 		        catch(Exception e){
 			 		        	e.printStackTrace();
 			 		        	return null;

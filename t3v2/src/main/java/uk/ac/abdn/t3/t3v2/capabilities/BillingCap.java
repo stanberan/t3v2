@@ -51,5 +51,19 @@ public class BillingCap implements Capability {
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 	}
 	
-	
+	   public boolean equals(Object object)
+	    {
+	       if(object!=null && object instanceof BillingCap){
+	    	   String x1=this.getProducer_uri();
+	    	   String x2=((BillingCap)object).getProducer_uri();
+	    	   String y1=this.getData_desc();
+	    	   String y2=((PersonalDataCollection)object).getData_desc();
+	    	   
+	    	if(x1.equals(x2)&& y1.equals(y2)){
+	    		return true;
+	    	}
+	    	   
+	       }
+	       return false;
+	    }
 }

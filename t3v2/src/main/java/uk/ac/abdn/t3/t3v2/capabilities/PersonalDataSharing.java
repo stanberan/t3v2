@@ -66,4 +66,22 @@ public class PersonalDataSharing implements Capability {
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 	}
 	
+	  public boolean equals(Object object)
+	    {
+	       if(object!=null && object instanceof PersonalDataSharing){
+	    	   String x1=this.getData_desc();
+	    	   String x2=((PersonalDataSharing)object).getData_desc();
+	    	   String y1=this.getConsumer_uri();
+	    	   String y2=((PersonalDataSharing)object).getConsumer_uri();
+
+	    	   
+	    	if(x1.equals(x2)&& y1.equals(y2)){
+	    		return true;
+	    	}
+	    	   
+	       }
+	       return false;
+	    }
+	
+	
 }

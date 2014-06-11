@@ -60,6 +60,22 @@ public class PersonalDataGeneration implements Capability {
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 	}
 	
+	   public boolean equals(Object object)
+	    {
+	       if(object!=null && object instanceof PersonalDataGeneration){
+	    	   String x1=this.getData_desc();
+	    	   String x2=((PersonalDataGeneration)object).getData_desc();
+	    	   String y1=this.getCompany_uri();
+	    	   String y2=((PersonalDataGeneration)object).getCompany_uri();
+	    	   
+	    	   
+	    	if(x1.equals(x2)&& y1.equals(y2)){
+	    		return true;
+	    	}
+	    	   
+	       }
+	       return false;
+	    }
 	
 	
 }
