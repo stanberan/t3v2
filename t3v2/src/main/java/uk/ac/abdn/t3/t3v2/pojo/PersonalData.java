@@ -31,6 +31,9 @@ public class PersonalData {
 	       }
 	       return false;
 	    }
+	   public int hashCode(){
+			  String str=this.getDescription();
+			return str.hashCode() ;}
 		public String toJson(){
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationConfig.Feature.WRITE_NULL_PROPERTIES, false);

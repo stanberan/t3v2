@@ -76,6 +76,9 @@ public class PersonalDataGeneration implements Capability {
 	       }
 	       return false;
 	    }
+	   public int hashCode(){
+			  String str=this.getDev_id()+this.getData_desc()+this.getCompany_uri();
+			return str.hashCode() ;}
 	
 	
 }
