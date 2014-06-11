@@ -339,7 +339,10 @@ ArrayList<Company>companies =new ArrayList<Company>();
 	        return companies; }
 	        catch(Exception e){
 	        	e.printStackTrace();
-	        	return null;
+	        	Company c=new Company();
+	        	c.setAddress("OOPS:"+e.getMessage());
+	        	companies.add(c);
+	        	return companies;
 	        }		     
 	      finally { qExec.close(); }
 		
