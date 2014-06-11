@@ -245,7 +245,7 @@ boolean isnew=	InferenceService.getService().compareCapabilities(ModelController
 	capabilityArray=capabilities.toArray(capabilityArray);
 	JSONArray jsonArray=new JSONArray();
 	for(Capability c:capabilities){
-	jsonArray.put(c.toJson());
+	jsonArray.put(new JSONObject(c.toJson()));
 	}
 	
 	if(capabilities!=null){

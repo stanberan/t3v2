@@ -457,7 +457,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
 		        	pdgs.add(pdg);
 		        }
-		        return filterPDSh(pdgs); }
+		        return pdgs; }
 		        catch(Exception e){
 		        	e.printStackTrace();
 		        	return null;
@@ -533,7 +533,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
 			 		        	pdgs.add(pdg);
 			 		        }
-			 		        return filterBil(pdgs); }
+			 		        return pdgs; }
 			 		        catch(Exception e){
 			 		        	e.printStackTrace();
 			 		        	return null;
