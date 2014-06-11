@@ -65,7 +65,8 @@ public class AnalyseTimer {
 
 				if(isnew){
 				System.err.println("notifying"+userid+"gcm"+gcms.get(j));
-				NotificationService.notifyUser(gcms.get(j), "The capabilities has changed. Have a look and accept or reject.");
+				NotificationService.notifyUser(gcms.get(j), "The capabilities has changed. We suggest you look again.");
+				
 					
 				}
 		

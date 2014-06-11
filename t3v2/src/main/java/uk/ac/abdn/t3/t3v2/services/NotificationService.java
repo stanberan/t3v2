@@ -25,7 +25,7 @@ public class NotificationService {
 		String key="AIzaSyBXB-j11raRKF6coCDoT39P4roqHjSETWc";
 		 DefaultHttpClient httpclient = new DefaultHttpClient();
 	      try{
-	    	  HttpPost request = new HttpPost("http://yoururl");
+	    	  HttpPost request = new HttpPost("https://android.googleapis.com/gcm/send");
 	    	   List<NameValuePair> postParameters;
 	    	  postParameters = new ArrayList<NameValuePair>();
 	    	    postParameters.add(new BasicNameValuePair("registration_id", gcm));
@@ -44,8 +44,13 @@ public class NotificationService {
 	    	  return false;
 	      }
 	    }
+	public static void main (String args[]){
+		NotificationService.notifyUser("APA91bE2d7yn0nGsiHssdKjOqkXy8rFp28xWerD0VPvm8q9xKj9DZm__SmSKGohZDLv2YfhdpCB_JmNKlehbJ4skCd4Kyi0RDIfofzCK7iQX1lLFHCOs6z3Er7v2oWN0fvYxi2gRogtGzxuyTFBwnatrcifkCSqNyQ", "TEST");
+	}
 		
 	}
+
+	
 	
 	
 
