@@ -209,14 +209,14 @@ PersonalData c=InferenceService.getService().getPersonalData(uri, InferenceServi
 	}
 @GET
 @Path("{devid}/companies")
-@Produces(MediaType.TEXT_PLAIN)
+@Produces(MediaType.APPLICATION_JSON)
 public Response getCompanies(@PathParam("devid") String devid) {
 ArrayList<Company> companies=InferenceService.getService().getCompanies(InferenceService.getService().getDeviceOntModel(devid));  
-		return Response.ok().entity(companies).build();
+		return Response.ok().entity(companies.size()).build();
 	}
 @GET
 @Path("{devid}/personaldata")
-@Produces(MediaType.TEXT_PLAIN)
+@Produces(MediaType.APPLICATION_JSON)
 public Response getPDCall(@PathParam("devid") String devid) {
 ArrayList<PersonalData> companies=InferenceService.getService().getPersonalData(InferenceService.getService().getDeviceOntModel(devid));  
 		return Response.ok().entity(companies).build();

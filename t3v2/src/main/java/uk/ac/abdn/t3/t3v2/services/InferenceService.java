@@ -311,11 +311,12 @@ ArrayList<Company>companies =new ArrayList<Company>();
 					+ "SELECT ?uri ?logo ?name ?tel ?url ?email ?address "
 					+ "WHERE {"
 					+ "?uri a foaf:Organization . "
-					+ "?uri foaf:name ?name . "
-					+ "	?uri ns:hasAddress ?address . "
-					+ " ?uri foaf:phone ?tel ."
-					+ " ?uri foaf:homepage ?url ."
-					+ " ?uri foaf:mbox ?email ."				
+					+ "OPTIONAL{?uri foaf:name ?name .} "
+					+ "	OPTIONAL {?uri ns:hasAddress ?address . }"
+					+ " OPTIONAL {?uri foaf:phone ?tel .}"
+					+ " OPTIONAL {?uri foaf:homepage ?url .}"
+					+ " OPTIONAL {?uri foaf:mbox ?email . }"
+					+ " OPTIONAL {?uri foaf:logo ?logo . }"				
 					+ "}");
 			
 			 query.setNsPrefixes(ModelController.prefixes);
