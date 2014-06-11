@@ -12,6 +12,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import uk.ac.abdn.t3.t3v2.DB;
 import uk.ac.abdn.t3.t3v2.Models;
+import uk.ac.abdn.t3.t3v2.capabilities.Capability;
+import uk.ac.abdn.t3.t3v2.models.ModelController;
 import uk.ac.abdn.t3.t3v2.pojo.Device;
 
 public class AnalyseTimer {
@@ -56,22 +58,21 @@ public class AnalyseTimer {
 			currentInferredCapabilities.write(System.out, "TTL");
 			for(int j=0; j<users.size();j++){
 				String userid=users.get(j);
-			    String acceptedCapGraph=Models.graphNS+userid+d.getDevid()+"/cap";
-			    String temporaryCapGraph=Models.graphNS+userid+d.getDevid()+"/temporary";
-			    
-				if(infService.compareCapabilities(acceptedCapGraph, currentInferredCapabilities)){
-					System.out.println("CAPABILITIES CHANGEEEEEEEEDDDDDDDD HEEEEEEEEYYYYYYY");
-					//save temporary cap
-					infService.changeCapabilities(currentInferredCapabilities, temporaryCapGraph);
-					//notify user about change so he can retrieve again.
-					
-				//	NotificationService.notifyUser(gcms.get(j), "Hey, there are new capabilities you did not agreed to, it would be worthwhile to check.");
-					
+				Model currentCap=ModelFactory.createDefaultModel();	
+				ArrayList<Capability>capabilities=QueryService.getSingleton().getCapabilitiesStaff(d.getDevid(),currentCap);
+				InferenceService.getService().changeCapabilities(currentCap, ModelController.TTT_GRAPH+d.getDevid()+userid+"/temp");
+			boolean isnew=	InferenceService.getService().compareCapabilities(ModelController.TTT_GRAPH+d.getDevid()+userid+"/accepted", currentCap);
+
+				if(isnew){
+				System.err.println("notifying"+userid+"gcm"+gcms.get(j));
+				NotificationService.notifyUser(gcms.get(j), "The capabilities has changed. Have a look and accept or reject.");
 					
 				}
 		
 				
 			}
+		}
+    }
 			
 			
 			
@@ -87,19 +88,7 @@ public class AnalyseTimer {
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-    }
-    }
+	
     
     public void stopTimer(){
     	timer.cancel();
