@@ -225,7 +225,11 @@ return Response.ok().entity(jsonArray.toString()).build();
 @Produces(MediaType.APPLICATION_JSON)
 public Response getPDCall(@PathParam("devid") String devid) {
 ArrayList<PersonalData> companies=InferenceService.getService().getPersonalData(InferenceService.getService().getDeviceOntModel(devid));  
-		return Response.ok().entity(companies).build();
+JSONArray jsonArray=new JSONArray();
+for(PersonalData c: companies){
+jsonArray.put(new JSONObject(c.toJson()));
+}			
+return Response.ok().entity(jsonArray.toString()).build();
 	}
 @GET
 @Path("{devid}/capabilities/{uid}")

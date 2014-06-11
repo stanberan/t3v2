@@ -329,7 +329,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 	        	QuerySolution q=rs.next();
 	        	c.setAddress(q.getLiteral("address").getString());
 	        	c.setEmail(q.getResource("email").getURI());
-	        	c.setTel(q.getLiteral("tel").getString());
+	        	c.setTel(q.getResource("tel").getURI());
 	        	c.setLogo(q.getResource("logo").getURI());
 	        	c.setUri(q.getResource("uri").getURI());
 	        	
