@@ -96,7 +96,8 @@ public class InferenceService {
 	
 	public OntModel getDeviceOntModel(Model baseModel){
 		OntModel TTT=ModelController.getT3Ont();
-		
+		System.out.println("TTT MODEL AFTER BASE MODEL PASSED");
+		TTT.write(System.out, "TTL");
 		OntModel ontDeviceModel=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, baseModel);
 		System.out.println("BEFORE");
 		ontDeviceModel.write(System.out, "TTL");
@@ -117,8 +118,7 @@ public class InferenceService {
 		
 	}
 	public void inferCapabilities(OntModel deviceOntModel, Model inferedCapabilities){
-
-			deviceOntModel.addSubModel(inferedCapabilities);
+		SPINModuleRegistry.get().init();
 		SPINModuleRegistry.get().registerAll(ModelController.getT3Ont(), null);
 		 
 		SPINInferences.run(deviceOntModel, inferedCapabilities, null, null,true, null);  

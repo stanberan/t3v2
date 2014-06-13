@@ -29,8 +29,8 @@
         <dependencies>
         <dependency>
 	<groupId>org.apache.httpcomponents</groupId>
-	<artifactId>httpclient</artifactId>
-	<version>4.0-alpha4</version>
+	<artifactId>http-core</artifactId>
+	<version>4.2.5</version>
 </dependency>
         
         <dependency>

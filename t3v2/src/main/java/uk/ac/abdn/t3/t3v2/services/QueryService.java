@@ -41,17 +41,19 @@ public class QueryService {
 	public ArrayList<Capability> getCapabilitiesStaff(String devid,Model currentInfferedCapabilities){
 		infService=InferenceService.getService();
 		
-		OntModel mainDeviceModel=infService.getDeviceOntModel(devid);
-		mainDeviceModel.addSubModel(currentInfferedCapabilities);
-		infService.inferCapabilities(mainDeviceModel, currentInfferedCapabilities);
+		OntModel ontDeviceModel=infService.getDeviceOntModel(devid);   //check
+		ontDeviceModel.addSubModel(currentInfferedCapabilities); 
+		System.out.println("ONTOLOGY BASE MODEL BEFORE CAPABILITY INFERENCE");
+		ontDeviceModel.writeAll(System.out, "TTL");
+		infService.inferCapabilities(ontDeviceModel, currentInfferedCapabilities);
 		System.out.println("CURRENT INFERRED CAPABILITIES FROM LOOP");
 		currentInfferedCapabilities.write(System.out, "TTL");
 		
-		ArrayList<PersonalDataGeneration> generation= infService.getPersonalDataCap(mainDeviceModel);
-		ArrayList<PersonalDataCollection> collection= infService.getPersonalDataCollection(mainDeviceModel);
-		ArrayList<PersonalDataSharing> consumption=infService.getPersonalDataSharing(mainDeviceModel);
-		ArrayList<BillingCap> billing=infService.getBillingCap(mainDeviceModel);
-		ArrayList<PersonalDataUsage> usage=infService.getPersonalDataUsage(mainDeviceModel);
+		ArrayList<PersonalDataGeneration> generation= infService.getPersonalDataCap(ontDeviceModel);
+		ArrayList<PersonalDataCollection> collection= infService.getPersonalDataCollection(ontDeviceModel);
+		ArrayList<PersonalDataSharing> consumption=infService.getPersonalDataSharing(ontDeviceModel);
+		ArrayList<BillingCap> billing=infService.getBillingCap(ontDeviceModel);
+		ArrayList<PersonalDataUsage> usage=infService.getPersonalDataUsage(ontDeviceModel);
 		
 		ArrayList<Capability> capabilities=new ArrayList<Capability>();
 		

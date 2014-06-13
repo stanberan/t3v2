@@ -47,7 +47,7 @@ static{
 	static Model RULES_M;
 	
 	public static Model ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
-static Repository TDB=Repository.getSingleton();
+static Repository TDB;//=Repository.getSingleton();
 	
 	//OntModel provenanceModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, "http://www.w3.org/ns/prov");
 
@@ -75,18 +75,16 @@ public static Model test(){
 		    }
 		    
 	 System.out.println("_____________BASE___________________");
-		  //  TTT_M.write(System.out,"N3");
+		    TTT_M.write(System.out,"N3");
 		    System.out.println("____________ALL__________________");
-		 //   TTT_M.writeAll(System.out,"N3");
+		    TTT_M.writeAll(System.out,"N3");
 		    
 		    return TTT_M;
 	 
 		  
 	}
 	
-	
-//	SPINModuleRegistry.get().init();
-//	SPINModuleRegistry.get().registerAll(RULES_M, null);
+
 public static void main(String[] args){
 	ModelController.getT3Ont();
 }
