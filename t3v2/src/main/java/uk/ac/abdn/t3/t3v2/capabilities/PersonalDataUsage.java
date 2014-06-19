@@ -5,13 +5,19 @@ import org.codehaus.jackson.map.SerializationConfig;
 
 public class PersonalDataUsage implements Capability  {
 String dev_id;
-	
+	String type;
 	String producer_uri;
 	String consumer_uri;
 	String data_uri;
 	String data_desc;
 	String purpose;
 	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getPurpose() {
 		return purpose;
 	}
@@ -62,6 +68,15 @@ String dev_id;
 		} catch (Exception e) {
 		}
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
+	}
+		
+	public boolean compareHeaders(Object o){
+		if(o instanceof PersonalDataUsage){
+		return ((PersonalDataUsage) o).getConsumer_uri().equals(this.getConsumer_uri());
+	
+		}
+		return false;
+	
 	}
 	
 	  public boolean equals(Object object)

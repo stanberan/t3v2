@@ -30,11 +30,26 @@ public class ControlResource {
 	
 
 	@GET
-	@Path("/repository/remove/{id}")
+	@Path("/repository/remove/device/{id}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response repoclear(@PathParam("id")String id){
 		String graph=ModelController.TTT_GRAPH+id+"/data";
 		String graph1=ModelController.TTT_GRAPH+id+"/prov";
+		boolean removed=TDB.removeNamedGraph(graph);
+		boolean removedprov=TDB.removeNamedGraph(graph1);
+		if(removed){
+		return Response.status(Response.Status.OK).entity("Removed"+graph+"and"+graph1).build();
+		}
+		else{
+			return Response.status(Response.Status.NO_CONTENT).entity("Not Removed or doesn't exist:"+graph).build();
+		}
+	}
+	@GET
+	@Path("/repository/remove/capability/{id}/{uid}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response clearCap(@PathParam("id")String id,@PathParam("uid") String uid){
+		String graph=ModelController.TTT_GRAPH+id+uid+"/accepted";
+		String graph1=ModelController.TTT_GRAPH+id+uid+"/temp";
 		boolean removed=TDB.removeNamedGraph(graph);
 		boolean removedprov=TDB.removeNamedGraph(graph1);
 		if(removed){

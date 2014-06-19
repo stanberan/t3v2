@@ -10,11 +10,27 @@ public class PersonalDataCollection implements Capability{
 	
 	
 	String dev_id;
-	
+	String type;
 	String producer_uri;
 	String consumer_uri;
 	String data_uri;
 	String data_desc;
+	String consumer_logo;
+	
+	
+	
+	public String getConsumer_logo() {
+		return consumer_logo;
+	}
+	public void setConsumer_logo(String consumer_logo) {
+		this.consumer_logo = consumer_logo;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getDev_id() {
 		return dev_id;
 	}
@@ -61,7 +77,15 @@ public class PersonalDataCollection implements Capability{
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 	}
 	
+	public boolean compareHeaders(Object o){
+		
+		if(o!=null && o instanceof PersonalDataUsage){
+		return ((PersonalDataCollection) o).getConsumer_uri().equals(this.getConsumer_uri());
 	
+		}
+		return false;
+	
+	}
 	   public boolean equals(Object object)
 	    {
 	       if(object!=null && object instanceof PersonalDataCollection){

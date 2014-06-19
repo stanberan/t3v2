@@ -5,9 +5,19 @@ import org.codehaus.jackson.map.SerializationConfig;
 
 public class BillingCap implements Capability {
 	String dev_id;
+	String type;
 	String producer_uri;   //AGENT who owns billing server!
 	String data_uri;
 	String data_desc;
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public String getProducer_uri() {
 		return producer_uri;
 	}
@@ -50,14 +60,21 @@ public class BillingCap implements Capability {
 		}
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
 	}
+	public boolean compareHeaders(Object o){
+		if(o!=null && o instanceof BillingCap){
+		return ((BillingCap) o).getProducer_uri().equals(this.getProducer_uri());
 	
+		}
+		return false;
+	
+	}
 	   public boolean equals(Object object)
 	    {
 	       if(object!=null && object instanceof BillingCap){
 	    	   String x1=this.getProducer_uri();
 	    	   String x2=((BillingCap)object).getProducer_uri();
 	    	   String y1=this.getData_desc();
-	    	   String y2=((PersonalDataCollection)object).getData_desc();
+	    	   String y2=((BillingCap)object).getData_desc();
 	    	   
 	    	if(x1.equals(x2)&& y1.equals(y2)){
 	    		return true;

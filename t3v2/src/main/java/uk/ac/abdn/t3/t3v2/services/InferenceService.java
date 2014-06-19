@@ -24,6 +24,7 @@ import com.hp.hpl.jena.tdb.TDB;
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.capabilities.BillingCap;
+import uk.ac.abdn.t3.t3v2.capabilities.Capability;
 import uk.ac.abdn.t3.t3v2.capabilities.PersonalDataCollection;
 import uk.ac.abdn.t3.t3v2.capabilities.PersonalDataGeneration;
 import uk.ac.abdn.t3.t3v2.capabilities.PersonalDataSharing;
@@ -37,6 +38,7 @@ public class InferenceService {
 
 	Repository TDB=Repository.getSingleton();
 	static InferenceService infservice=null;
+	static boolean first=true;
 	static{
 		SPINModuleRegistry.get().init();
 	
@@ -94,16 +96,16 @@ public class InferenceService {
 		
 	}
 	
-	public OntModel getDeviceOntModel(Model baseModel){
+	private OntModel getDeviceOntModel(Model baseModel){
 		OntModel TTT=ModelController.getT3Ont();
 		System.out.println("TTT MODEL AFTER BASE MODEL PASSED");
-		TTT.write(System.out, "TTL");
+//		TTT.write(System.out, "TTL");
 		OntModel ontDeviceModel=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, baseModel);
 		System.out.println("BEFORE");
-		ontDeviceModel.write(System.out, "TTL");
+		//ontDeviceModel.write(System.out, "TTL");
 		ontDeviceModel.addSubModel(TTT);
 		System.out.println("AFTER");
-		ontDeviceModel.write(System.out, "TTL");
+	//	ontDeviceModel.write(System.out, "TTL");
 	
 		return ontDeviceModel;
 				
@@ -111,45 +113,73 @@ public class InferenceService {
 		
 		
 	}
-	public Model getAcceptedCapabilities(String acceptedGraph){	
+	public Model getAcceptedCapabilities(String uid,String devid){
+		String acceptedGraph=ModelController.TTT_GRAPH+devid+uid+"/accepted";
 		Model m=TDB.getIndependentModel(acceptedGraph);
 		System.out.print("Retrieving Accepted cap from Graph "+acceptedGraph);
+		if(m!=null){
+			System.out.print("Found accepted returning model "+acceptedGraph);
 		return m;
+		}
+		System.out.print("Accepted not found creating new model "+acceptedGraph);
+		return null;
 		
 	}
 	public void inferCapabilities(OntModel deviceOntModel, Model inferedCapabilities){
 		SPINModuleRegistry.get().init();
-		SPINModuleRegistry.get().registerAll(ModelController.getT3Ont(), null);
-		 
-		SPINInferences.run(deviceOntModel, inferedCapabilities, null, null,true, null);  
+		if(first){
+		SPINModuleRegistry.get().registerAll(deviceOntModel, null);
+		first=false;
+		}
+		SPINInferences.run(deviceOntModel, inferedCapabilities, null, null,true, null); 
+	
 	 
 	//TDB.addToGraph(inference, Models.graphNS+"usersimbbox001/"+type);
 	
 		
 	}
-	public void changeCapabilities(Model cap,String graph){
-		TDB.removeNamedGraph(graph);
-		TDB.addToGraph(cap, graph);
-		System.out.println("Capabilities removed and updated!"+graph);
+	public void changeAcceptedCapabilities(String uid,String devid){
+		String newGraph=ModelController.TTT_GRAPH+devid+uid+"/temp";
+		String accGraph=ModelController.TTT_GRAPH+devid+uid+"/accepted";
+		System.out.println("Changing accepted removing"+accGraph);
+		TDB.removeNamedGraph(accGraph);
+		System.out.println("Getting current accepted"+newGraph);
+		Model m=TDB.getIndependentModel(newGraph);
+		m.write(System.out,"TTL");
+		System.out.println("Accepted capabilities add...XXXXXXXXXXXXXXXFrommodel"+accGraph);
+		TDB.addToGraph(m, accGraph);
+		Model c=TDB.getIndependentModel(accGraph);
+		c.write(System.out,"TTL");
+		System.out.println("Accepted Capabilities removed and updated!"+accGraph);
+		
+	}
+	public void changeTemporaryCap(Model m, String temp){
+		System.out.println("Changing temp+Removing"+temp);
+		TDB.removeNamedGraph(temp);
+		System.out.println("Changing Adding new to"+temp);
+		
+		TDB.addToGraph(m, temp);
+	//	TDB.getIndependentModel(temp).write(System.out,"TTL");
+		
 	}
 	
 	//currentGraph different?
 	
-	public boolean compareCapabilities (String acceptedGraph,Model currentModel){
+	public boolean compareCapabilities (Model acceptedCap,Model currentCap){
 	
 		System.out.println("________CURRENTT_______");
-		currentModel.write(System.out,"TTL");
-		if(currentModel!=null){			
-			Model acceptedCap=TDB.getIndependentModel(acceptedGraph);
+	//	currentCap.write(System.out,"TTL");
+		if(!currentCap.isEmpty()){			
 			if(acceptedCap==null){
 				System.out.println("ACCEPTED NULL");
 				acceptedCap=ModelFactory.createDefaultModel();
 				return true;
 			}
+			System.out.println("ACCEPTED NOT EMPTY");
 		
-			boolean iso=acceptedCap.isIsomorphicWith(currentModel);
+			boolean iso=currentCap.isIsomorphicWith(acceptedCap);
 			
-			  Model difference=currentModel.difference(acceptedCap);
+			  Model difference=currentCap.difference(acceptedCap);
 				
 			    if(!difference.isEmpty()){ 
 			    
@@ -311,6 +341,8 @@ ArrayList<Company>companies =new ArrayList<Company>();
 					+ "SELECT ?uri ?logo ?name ?tel ?url ?email ?address "
 					+ "WHERE {"
 					+ "?uri a foaf:Organization . "
+					+ "?controller prov:actedOnBehalfOf ?uri . "
+					+ "?activity prov:wasAssociatedWith ?controller . "
 					+ "OPTIONAL{?uri foaf:name ?name .} "
 					+ "	OPTIONAL {?uri ns:hasAddress ?address . }"
 					+ " OPTIONAL {?uri foaf:phone ?tel .}"
@@ -332,6 +364,9 @@ ArrayList<Company>companies =new ArrayList<Company>();
 	        	c.setTel(q.getResource("tel").getURI());
 	        	c.setLogo(q.getResource("logo").getURI());
 	        	c.setUri(q.getResource("uri").getURI());
+	        	c.setWeb(q.getResource("url").getURI());
+	        	c.setName(q.getLiteral("name").getString());
+	        	
 	        	
 	        	companies.add(c);
 	      
@@ -339,10 +374,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 	        return companies; }
 	        catch(Exception e){
 	        	e.printStackTrace();
-	        	Company c=new Company();
-	        	c.setAddress("OOPS:"+e.getMessage());
-	        	companies.add(c);
-	        	return companies;
+	        return companies;
 	        }		     
 	      finally { qExec.close(); }
 		
@@ -360,7 +392,8 @@ ArrayList<Company>companies =new ArrayList<Company>();
 					+ "	?uri ns:hasAddress ?address . "
 					+ " ?uri foaf:phone ?tel ."
 					+ " ?uri foaf:homepage ?url ."
-					+ " ?uri foaf:mbox ?email ."				
+					+ " ?uri foaf:mbox ?email ."		
+					+ " ?uri foaf:logo ?logo ."	
 					+ "}");
 			
 			 query.setNsPrefixes(ModelController.prefixes);
@@ -372,8 +405,10 @@ ArrayList<Company>companies =new ArrayList<Company>();
 	        	QuerySolution q=rs.next();
 	        	c.setAddress(q.getLiteral("address").getString());
 	        	c.setEmail(q.getResource("email").getURI());
-	        	c.setTel(q.getLiteral("tel").getString());
+	        	c.setTel(q.getResource("tel").getURI());
 	        	c.setLogo(q.getResource("logo").getURI());
+	        	c.setWeb(q.getResource("url").getURI());
+	        	c.setName(q.getLiteral("name").getString());
 	        	c.setUri(uri);
 	      
 	        }
@@ -390,13 +425,13 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		ArrayList<PersonalDataGeneration> pdgs=new ArrayList<PersonalDataGeneration>();
 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 	query.setCommandText( ""
-				+ "SELECT ?company_uri ?data_uri ?data_desc ?t3desc "
+				+ "SELECT ?company_uri ?data_uri ?logo ?data_desc "
 				+ "WHERE {"
 				+ "?pdc a ttt:PersonalDataGeneration . "
 				+ "?pdc ttt:generates ?data_uri . "
 				+ "	?data_uri ttt:description ?data_desc . "
 				+ " ?pdc ttt:generatedBy ?company_uri ."
-				+ "  ttt:PersonalDataGeneration rdfs:label ?t3desc ."
+				+ " ?company_uri foaf:logo ?logo .   "
 				+ "   }");
 
 		 query.setNsPrefixes(ModelController.prefixes);
@@ -407,16 +442,17 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		        while(rs.hasNext()){
 		        	PersonalDataGeneration pdg=new PersonalDataGeneration();
 		        	QuerySolution cap=rs.next();
-		        pdg.setCompany_uri(cap.get("company_uri").asResource().getURI());
+		        pdg.setGeneratedBy(cap.get("company_uri").asResource().getURI());
 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());
-		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	   
-		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());	 
+		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
+		        pdg.setType(ModelController.TTT_NS+"PersonalDataGeneration");
+		        pdg.setGeneratedBy_logo(cap.get("logo").asResource().getURI());
 		        	pdgs.add(pdg);
 		        }
 		        return filterPDG(pdgs); }
 		        catch(Exception e){
 		        	e.printStackTrace();
-		        	return null;
+		        	return pdgs;
 		        }		     
 		      finally { qExec.close(); }
 
@@ -430,7 +466,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		ArrayList<PersonalDataSharing> pdgs=new ArrayList<PersonalDataSharing>();
 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 	query.setCommandText( ""
-				+ "SELECT ?data_desc ?t3desc ?data_uri ?consumer_uri ?provider_uri ?purpose "
+				+ "SELECT ?data_desc ?type ?data_uri ?consumer_uri ?provider_uri ?purpose "
 				+ "WHERE {"
 				+ "?pdc a ttt:PersonalDataSharing . "
 				+ "?pdc ttt:consumes ?data_uri . "
@@ -438,7 +474,6 @@ ArrayList<Company>companies =new ArrayList<Company>();
 				+ " ?pdc ttt:provider ?provider_uri ."
 				+ " ?pdc ttt:consumer ?consumer_uri ."
 				+ " ?pdc ttt:purpose ?purpose ."
-				+ "  ttt:PersonalDataSharing rdfs:label ?t3desc ."
 				+ "   }");
 
 		 query.setNsPrefixes(ModelController.prefixes);
@@ -453,14 +488,16 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		        pdg.setProducer_uri(cap.get("provider_uri").asResource().getURI());
 		       pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
-		        pdg.setPurpose(cap.get("purpose").asLiteral().getString());	
-		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
+		        pdg.setPurpose(cap.get("purpose").asLiteral().getString());
+		        
+		        pdg.setType(ModelController.TTT_NS+"PersonalDataSharing");
+		        
 		        	pdgs.add(pdg);
 		        }
 		        return filterPDSh(pdgs); }
 		        catch(Exception e){
 		        	e.printStackTrace();
-		        	return null;
+		        	return pdgs;
 		        }		     
 		      finally { qExec.close(); }
 
@@ -469,20 +506,21 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		 		ArrayList<PersonalDataCollection> pdgs=new ArrayList<PersonalDataCollection>();
 		 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 		 	query.setCommandText( ""
-		 				+ "SELECT ?data_desc ?t3desc ?data_uri ?consumer_uri ?provider_uri "
+		 				+ "SELECT ?data_desc ?logo ?data_uri ?consumer_uri ?provider_uri "
 		 				+ "WHERE {"
 		 				+ "?pdc a ttt:PersonalDataCollection . "
 		 				+ "?pdc ttt:consumes ?data_uri. "
 		 		    	+ "	?data_uri ttt:description ?data_desc . "
 		 				+ " ?pdc ttt:provider ?provider_uri ."
 		 				+ " ?pdc ttt:consumer ?consumer_uri ."
-		 				+ "  ttt:PersonalDataCollection rdfs:label ?t3desc ."
+		 				+ " ?consumer_uri foaf:logo ?logo ."
 		 				+ "   }");
 
 		 		 query.setNsPrefixes(ModelController.prefixes);
 		 	QueryExecution qExec=QueryExecutionFactory.create(query.asQuery(),instance);	
 		 		   
-		 	ResultSet rs = qExec.execSelect() ;
+		 	ResultSet rs = qExec.execSelect()
+		 			;
 		 		     try {
 		 		        while(rs.hasNext()){
 		 		        	PersonalDataCollection pdg=new PersonalDataCollection();
@@ -491,13 +529,14 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		 		        pdg.setProducer_uri(cap.get("provider_uri").asResource().getURI());
 		 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 		 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
-		 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
+		 		        pdg.setConsumer_logo(cap.get("logo").asResource().getURI());
+		 		      pdg.setType(ModelController.TTT_NS+"PersonalDataCollection");
 		 		        	pdgs.add(pdg);
 		 		        }
 		 		        return filterPDC(pdgs); }
 		 		        catch(Exception e){
 		 		        	e.printStackTrace();
-		 		        	return null;
+		 		        	return pdgs;
 		 		        }		     
 		 		      finally { qExec.close(); }
 
@@ -508,14 +547,12 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		ArrayList<BillingCap> pdgs=new ArrayList<BillingCap>();
 			 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 			 	query.setCommandText( ""
-			 				+ "SELECT ?data_desc ?t3desc ?data_uri ?provider_uri "
+			 				+ "SELECT ?data_desc ?data_uri ?provider_uri "
 			 				+ "WHERE {"
 			 				+ "?pdc a ttt:BillingCap. "
 			 				+ "?pdc ttt:consumes ?data_uri. "
-			 		    	+ "	?data_uri ttt:description ?data_desc . "
+			 		    	+ "	?data_uri ttt:description ?data_desc . "   //type of bill
 			 				+ " ?pdc ttt:provider ?provider_uri ."
-			 				+ " ?pdc ttt:consumer ?consumer_uri ."
-			 				+ "  ttt:BillingCap rdfs:label ?t3desc ."
 			 				+ "   }");
 
 			 		 query.setNsPrefixes(ModelController.prefixes);
@@ -530,13 +567,13 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		        pdg.setProducer_uri(cap.get("provider_uri").asResource().getURI());
 			 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 			 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
-			 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
+			 		        pdg.setType(ModelController.TTT_NS+"BillingCap");
 			 		        	pdgs.add(pdg);
 			 		        }
 			 		        return filterBil(pdgs); }
 			 		        catch(Exception e){
 			 		        	e.printStackTrace();
-			 		        	return null;
+			 		        	return pdgs;
 			 		        }		     
 			 		      finally { qExec.close(); }
 
@@ -592,19 +629,26 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		    	 return null;
 		    	 
 		     }
+		     
+		   
+
+
+
+
+		     
 		     public ArrayList<PersonalDataUsage> getPersonalDataUsage(OntModel instance){
 			 		ArrayList<PersonalDataUsage> pdgs=new ArrayList<PersonalDataUsage>();
 			 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 			 	query.setCommandText( ""
-			 				+ "SELECT ?purpose ?data_desc ?t3desc ?data_uri ?consumer_uri ?provider_uri "
+			 				+ "SELECT ?purpose ?consumer_logo ?data_desc ?data_uri ?consumer_uri ?provider_uri "
 			 				+ "WHERE {"
 			 				+ "?pdc a ttt:PersonalDataUsage . "
 			 				+ "?pdc ttt:consumes ?data_uri. "
 			 		    	+ "	?data_uri ttt:description ?data_desc . "
 			 				+ " ?pdc ttt:producer ?provider_uri ."
 			 				+ " ?pdc ttt:consumer ?consumer_uri ."
+			 				+ " ?consumer_uri foaf:logo ?consumer_logo ."
 			 				+ " ?pdc ttt:purpose ?purpose ."
-			 				+ "  ttt:PersonalDataUsage rdfs:label ?t3desc ."
 			 				+ "   }");
 
 			 		 query.setNsPrefixes(ModelController.prefixes);
@@ -619,8 +663,8 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		        pdg.setProducer_uri(cap.get("provider_uri").asResource().getURI());
 			 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 			 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
-			 		        pdg.setDev_id(cap.get("t3desc").asLiteral().getString());
-			 		       pdg.setPurpose(cap.get("t3desc").asLiteral().getString());
+			 		       pdg.setPurpose(cap.get("purpose").asLiteral().getString());
+			 		       pdg.setType(ModelController.TTT_NS+"PersonalDataUsage");
 			 		        	pdgs.add(pdg);
 			 		        }
 			 		        return pdgs; }

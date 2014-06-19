@@ -5,8 +5,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 
 public class PersonalDataSharing implements Capability {
 	
-	PersonalDataSharing sharing;
-	
+	String type;
 	String dev_id;
 	String producer_uri;
 	String consumer_uri;
@@ -14,6 +13,12 @@ public class PersonalDataSharing implements Capability {
 	String data_desc;
 	String purpose;
 	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getDev_id() {
 		return dev_id;
 	}
@@ -64,6 +69,16 @@ public class PersonalDataSharing implements Capability {
 		} catch (Exception e) {
 		}
 		return "{\"error\":\"couldnotgenerate json"+this.toString()+"\"}";
+	}
+	
+	
+	public boolean compareHeaders(Object o){
+		if(o instanceof PersonalDataSharing){
+		return ((PersonalDataSharing) o).getConsumer_uri().equals(this.getConsumer_uri());
+	
+		}
+		return false;
+	
 	}
 	
 	  public boolean equals(Object object)

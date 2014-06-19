@@ -35,16 +35,17 @@ static{
 	final static String IOTA="http://t3.abdn.ac.uk/ontologies/iota.owl";
 	//final static String RULES="http://t3.abdn.ac.uk/ontologies/rules.owl";
 	
-	final static String INSTANCE_NS="http://t3.abdn.ac.uk/ontologies/instancedata.owl#";
-	final static String TTT_NS="http://t3.abdn.ac.uk/ontologies/t3.owl#";
-	final static String IOTA_NS="http://t3.abdn.ac.uk/ontologies/iota.owl#";
-	final static String PROV_NS="http://www.w3.org/ns/prov#";
+	public final static String INSTANCE_NS="http://t3.abdn.ac.uk/ontologies/instancedata.owl#";
+	public final static String TTT_NS="http://t3.abdn.ac.uk/ontologies/t3.owl#";
+	public final static String IOTA_NS="http://t3.abdn.ac.uk/ontologies/iota.owl#";
+	public final static String PROV_NS="http://www.w3.org/ns/prov#";
 	public final static String TTT_GRAPH="http://t3.abdn.ac.uk/t3v2/1/device/";
 	
 	public static OntModel TTT_M=null;
 	static Model PROV_M;
 	static Model IOTA_M;
 	static Model RULES_M;
+	
 	
 	public static Model ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 static Repository TDB;//=Repository.getSingleton();
@@ -74,11 +75,7 @@ public static Model test(){
 		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2.rdf",null,"RDF/XML"); 
 		    }
 		    
-	 System.out.println("_____________BASE___________________");
-		    TTT_M.write(System.out,"N3");
-		    System.out.println("____________ALL__________________");
-		    TTT_M.writeAll(System.out,"N3");
-		    
+	
 		    return TTT_M;
 	 
 		  

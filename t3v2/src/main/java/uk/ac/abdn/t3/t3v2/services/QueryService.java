@@ -38,16 +38,13 @@ public class QueryService {
 	}
 	
 	
-	public ArrayList<Capability> getCapabilitiesStaff(String devid,Model currentInfferedCapabilities){
+	public ArrayList<Capability> getCapabilitiesArray(OntModel ontDeviceModel,Model currentInfferedCapabilities){
 		infService=InferenceService.getService();
-		
-		OntModel ontDeviceModel=infService.getDeviceOntModel(devid);   //check
-		ontDeviceModel.addSubModel(currentInfferedCapabilities); 
-		System.out.println("ONTOLOGY BASE MODEL BEFORE CAPABILITY INFERENCE");
-		ontDeviceModel.writeAll(System.out, "TTL");
-		infService.inferCapabilities(ontDeviceModel, currentInfferedCapabilities);
-		System.out.println("CURRENT INFERRED CAPABILITIES FROM LOOP");
-		currentInfferedCapabilities.write(System.out, "TTL");
+		if(currentInfferedCapabilities==null){
+			System.out.println("!!!!!!!!!!!!!Current inferred capabilities is NULL!!!!!!!!!!!!!");
+			currentInfferedCapabilities=ModelFactory.createDefaultModel();
+		}
+		ontDeviceModel.addSubModel(currentInfferedCapabilities);
 		
 		ArrayList<PersonalDataGeneration> generation= infService.getPersonalDataCap(ontDeviceModel);
 		ArrayList<PersonalDataCollection> collection= infService.getPersonalDataCollection(ontDeviceModel);
@@ -55,6 +52,7 @@ public class QueryService {
 		ArrayList<BillingCap> billing=infService.getBillingCap(ontDeviceModel);
 		ArrayList<PersonalDataUsage> usage=infService.getPersonalDataUsage(ontDeviceModel);
 		
+		ontDeviceModel.removeSubModel(currentInfferedCapabilities);
 		ArrayList<Capability> capabilities=new ArrayList<Capability>();
 		
 		capabilities.addAll(generation);
@@ -67,6 +65,26 @@ public class QueryService {
 		return capabilities;
 		
 	}
+	
+	  public ArrayList<Capability> getHeaders(OntModel ont, Model inf){
+	    	 ArrayList<Capability> all=getCapabilitiesArray(ont,inf);
+	    	 ArrayList<Capability> headers=new ArrayList<Capability>();
+	    	 for(Capability c: all){
+	    		for(Capability h: headers){
+	    			if(!h.compareHeaders(c)){
+	    				headers.add(c);
+	    			
+	    			}
+	    		
+	    		}
+	    	 }	    	 
+	    	 if(headers.size() != 0){
+	    		 return headers;
+	    	 }
+	    	 return null;
+	  }
+	    		 
+
 	
 	
 	

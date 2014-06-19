@@ -130,8 +130,8 @@ public boolean associateDevAndUser(String devid,String userid){
 		pStatement.setString(2, userid);
 		
 	int i=pStatement.executeUpdate();
-	System.out.println("IoT Device:"+devid +"was associated with user"+userid);
-	return true;
+	System.out.println("IoT Device:"+devid +"was associated with user with new cap"+userid);
+	return true;  //return true even if no association was done. 
 		}
 	}
 	catch(Exception e){

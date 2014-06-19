@@ -6,10 +6,13 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONObject;
+
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
+import uk.ac.abdn.t3.t3v2.CapabilityMatchingService;
 import uk.ac.abdn.t3.t3v2.DB;
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.capabilities.Capability;
@@ -17,12 +20,15 @@ import uk.ac.abdn.t3.t3v2.models.ModelController;
 import uk.ac.abdn.t3.t3v2.pojo.Device;
 
 public class AnalyseTimer {
+	
+	InferenceService inferenceService=InferenceService.getService();
+	QueryService queryService=QueryService.getSingleton();
 	static DB db=DB.getDB();
-
+	
 	long delay = 10*60*1000; // ms
     LoopTask task = new LoopTask();
     Timer timer = new Timer("TaskName");
-   
+
     public AnalyseTimer(int minutes){
     	if(minutes!=0 && minutes>0){
     	
@@ -38,7 +44,7 @@ public class AnalyseTimer {
 
     private class LoopTask extends TimerTask {
     public void run() {
-    	InferenceService infService=InferenceService.getService();
+   
     	System.out.println("Executing: Checking provenance "+delay);
     	
     	System.out.println("Getting all devices...");
@@ -50,25 +56,16 @@ public class AnalyseTimer {
 			
 			ArrayList<String> users=d.getUsers();
 			ArrayList<String> gcms=d.getGoogleId();
-			
-			OntModel mainDeviceModel=infService.getDeviceOntModel(d.getDevid());
-			Model currentInferredCapabilities=ModelFactory.createDefaultModel();
-			infService.inferCapabilities(mainDeviceModel, currentInferredCapabilities);
-			System.out.println("CURRENT INFERRED CAPABILITIES FROM LOOP");
-			currentInferredCapabilities.write(System.out, "TTL");
 			for(int j=0; j<users.size();j++){
 				String userid=users.get(j);
-				Model currentCap=ModelFactory.createDefaultModel();	
-				ArrayList<Capability>capabilities=QueryService.getSingleton().getCapabilitiesStaff(d.getDevid(),currentCap);
-				InferenceService.getService().changeCapabilities(currentCap, ModelController.TTT_GRAPH+d.getDevid()+userid+"/temp");
-			boolean isnew=	InferenceService.getService().compareCapabilities(ModelController.TTT_GRAPH+d.getDevid()+userid+"/accepted", currentCap);
-
-				if(isnew){
-				System.err.println("notifying"+userid+"gcm"+gcms.get(j));
-				NotificationService.notifyUser(gcms.get(j), "The capabilities has changed. We suggest you look again.");
-				
-					
-				}
+				//check
+		JSONObject jsondata=CapabilityMatchingService.capabilityMatch(d.getDevid(), userid);
+			if(jsondata.has("newcapabilities")){
+			String message="Some capabilities for the "+d.getDevid()+"has changed.\nClick on this notification to retrieve them.";			
+	        JSONObject ob=new JSONObject();
+			ob.put("message", message);
+			
+			NotificationService.notifyUser(gcms.get(j), ob);
 		
 				
 			}
@@ -83,10 +80,23 @@ public class AnalyseTimer {
 		
 		
 		
+    }
 		
 		
+		public boolean different(String devid,String uid){
+			Model currentCap=ModelFactory.createDefaultModel();	
+			
+			
+			//add it to the list of temporary capabilities for the user and device
 		
-		
+			inferenceService.changeTemporaryCap(currentCap, ModelController.TTT_GRAPH+devid+uid+"/temp");
+			//get accepted capabilities of user for the specific iot device.
+			Model acceptedCap=inferenceService.getAcceptedCapabilities(uid,devid);
+			
+			
+			//check if the capabilities are different in the graph level. (is isomorphic)
+	return inferenceService.compareCapabilities(acceptedCap, currentCap);
+		}
 		
 		
 	

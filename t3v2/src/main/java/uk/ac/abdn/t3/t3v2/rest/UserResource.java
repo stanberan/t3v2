@@ -12,12 +12,14 @@ import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.pojo.CustomError;
 import uk.ac.abdn.t3.t3v2.pojo.Device;
 import uk.ac.abdn.t3.t3v2.pojo.User;
-import uk.ac.abdn.t3.t3v2.services.AnalyseTimer;
+import uk.ac.abdn.t3.t3v2.services.InferenceService;
+import uk.ac.abdn.t3.t3v2.services.QueryService;
 @Path("user")
 public class UserResource {
 	
 	static Repository TDB=Repository.getSingleton();
 	static DB db=DB.getDB();
+	static InferenceService inferenceService=InferenceService.getService();
 	
 	
 	
@@ -32,25 +34,54 @@ public class UserResource {
 	   if(updated){
 		   return Response.ok().entity(u.toJson()).build();
 	   }
-	   return Response.ok(new CustomError("registerUser","User not updated").toJson()).build();
+	   return Response.noContent().entity(new CustomError("registerUser","Users gcm not updated").toJson()).build();
 		
 	}
 	
+/*
+@Path("compare/{type}")
+@Produces(MediaType.TEXT_PLAIN)
+public String get(@PathParam("type") String type) {
+InferenceService infService=InferenceService.getService();
+
+//infService.compareCapabilities("simbbox001", "user");
+return "Done";
+
+}*/
 	
+	
+	@GET
+	@Path("/accept/capabilities/{userid}/{devid}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response acceptCap(@PathParam ("userid")String userid,@PathParam("devid")String devid){
+		
+		
+	   boolean exist=db.associateDevAndUser(devid,userid );
+	   inferenceService.changeAcceptedCapabilities(userid, devid);
+	     
+	   if(exist){
+		   
+		   return Response.ok().entity("Associated").build();
+	   }
+	   return Response.noContent().entity(new CustomError("registerUser","User not updated").toJson()).build();
+		
+	}
+
 	
 
 	@GET
 	@Path("/register/device/{userid}/{deviceid}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String gcmid){
+	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String devid){
 		
 		
-	   boolean updated=db.associateDevAndUser(gcmid,userid );
-	  
-	   if(updated){
+	   boolean exist=db.associateDevAndUser(devid,userid );
+	
+	     
+	   if(exist){
 		   return Response.ok().entity("Associated").build();
 	   }
-	   return Response.ok(new CustomError("registerUser","User not updated").toJson()).build();
+	   return Response.noContent().entity(new CustomError("registerUser","User not updated").toJson()).build();
 		
 	}
 }

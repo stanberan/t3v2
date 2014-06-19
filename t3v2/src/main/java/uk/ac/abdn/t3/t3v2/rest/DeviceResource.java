@@ -35,6 +35,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import uk.ac.abdn.t3.t3v2.CapabilityMatchingService;
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.RDFData;
 import uk.ac.abdn.t3.t3v2.Repository;
@@ -45,6 +46,7 @@ import uk.ac.abdn.t3.t3v2.pojo.CustomError;
 import uk.ac.abdn.t3.t3v2.pojo.DeviceDescription;
 import uk.ac.abdn.t3.t3v2.pojo.PersonalData;
 import uk.ac.abdn.t3.t3v2.services.InferenceService;
+import uk.ac.abdn.t3.t3v2.services.NotificationService;
 import uk.ac.abdn.t3.t3v2.services.QueryService;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -97,37 +99,16 @@ try{
    Model temp=ModelFactory.createDefaultModel();
    temp.read(stream,null,"TTL");
    System.out.println("From model object:");
-   temp.write(System.out, "TTL");
+   //temp.write(System.out, "TTL");
         TDB.addToGraph(temp, Models.graphNS+device_id+"/prov");
 }
 catch(Exception e){
-	return Response.noContent().entity(e.getMessage()).build();
+	return Response.notModified().entity(new CustomError("uploadprov","Exception whenuploading provenance"+e.getMessage())).build();
 }
-        return Response.accepted().entity("Done").build();
+        return Response.accepted().entity("Accepted").build();
         
         
     }
-@GET
-@Path("/remove/{devid}/{type}")
-public Response removeDev(@PathParam("type") String type,@PathParam("devid")String id){
-	String graph="";
-	if(type.equals("all")){
-		graph=ModelController.TTT_GRAPH+id;
-	}
-	else{
-		graph=ModelController.TTT_GRAPH+id+"/"+type;
-	}
-	System.out.println("Trying to remove ..."+graph);
-	boolean removed=TDB.removeNamedGraph(graph);
-	if(removed){
-	return Response.status(Response.Status.OK).entity("Removed"+graph).build();
-	}
-	else{
-		return Response.status(Response.Status.NO_CONTENT).entity("Not Removed or doesn't exist:"+graph).build();
-	}
-}
-
-
 
 @GET
 @Path("{deviceid}/{type}")
@@ -156,26 +137,7 @@ public Response getGraph(@PathParam("deviceid") String id,@PathParam("type") Str
   return Response.ok(stream).build();
 }
 
-@GET
-@Path("infer/{type}")
-@Produces(MediaType.TEXT_PLAIN)
-public String infer(@PathParam("type") String type) {
-InferenceService infService=InferenceService.getService();
-
-//infService.inferCapabilities(type);
-return "Done";
-
-}
-@GET
-@Path("compare/{type}")
-@Produces(MediaType.TEXT_PLAIN)
-public String get(@PathParam("type") String type) {
-InferenceService infService=InferenceService.getService();
-
-//infService.compareCapabilities("simbbox001", "user");
-return "Done";
-
-}
+//dd
 
 @GET
 @Path("{devid}/description/")
@@ -189,24 +151,42 @@ public Response getDescription(@Context UriInfo uriInfo,@PathParam("devid") Stri
 		return Response.ok().entity(desc.toJson()).build();
 	}
 	System.out.println("Desc NULL");
-return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request for description failed").toJson()).build();
+return Response.notModified().entity(new CustomError(uriInfo.getPath(),"Request for description failed").toJson()).build();
 
 }
-@GET
-@Path("{devid}/company/{uri}")
-@Produces(MediaType.TEXT_PLAIN)
-public Response getCompanyUri(@PathParam("uri") String uri,@PathParam("devid") String devid) {
+@POST
+@Path("{devid}/company/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public Response getCompanyUri(@PathParam("devid") String devid,String json) {
+	JSONObject j=new JSONObject(json);
+	String uri=j.getString("uri");
+	
 Company c=InferenceService.getService().getCompany(uri, InferenceService.getService().getDeviceOntModel(devid));  
-		return Response.ok().entity(c).build();
+if(c!=null){		
+return Response.ok().entity(c).build();  //200
+}
+else{
+	return Response.noContent().build(); //204
+}
 	}
 
-@GET
-@Path("{devid}/personaldata/{uri}")
-@Produces(MediaType.TEXT_PLAIN)
-public Response getPDC(@PathParam("uri") String uri,@PathParam("devid") String devid) {
+@POST
+@Path("{devid}/personaldata/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public Response getPDC(@PathParam("devid") String devid, String json) {
+	JSONObject j=new JSONObject(json);
+	String uri=j.getString("uri");
 PersonalData c=InferenceService.getService().getPersonalData(uri, InferenceService.getService().getDeviceOntModel(devid));  
-		return Response.ok().entity(c).build();
+if(c!=null){		
+return Response.ok().entity(c).build();  //200
+}
+else{
+	return Response.noContent().build(); //204
+}
 	}
+	
 @GET
 @Path("{devid}/companies")
 @Produces(MediaType.APPLICATION_JSON)
@@ -216,12 +196,15 @@ JSONArray jsonArray=new JSONArray();
 for(Company c: companies){
 jsonArray.put(new JSONObject(c.toJson()));
 }	
-
-
-return Response.ok().entity(jsonArray.toString()).build();
+if(jsonArray.length()!=0){
+return Response.ok().entity(jsonArray.toString()).build();   //200
+}
+else{
+	return Response.noContent().build();     //204
+}
 	}
 @GET
-@Path("{devid}/personaldata")
+@Path("{devid}/personaldata/all")
 @Produces(MediaType.APPLICATION_JSON)
 public Response getPDCall(@PathParam("devid") String devid) {
 ArrayList<PersonalData> companies=InferenceService.getService().getPersonalData(InferenceService.getService().getDeviceOntModel(devid));  
@@ -229,41 +212,31 @@ JSONArray jsonArray=new JSONArray();
 for(PersonalData c: companies){
 jsonArray.put(new JSONObject(c.toJson()));
 }			
-return Response.ok().entity(jsonArray.toString()).build();
+if(jsonArray.length()!=0){
+return Response.ok().entity(jsonArray.toString()).build();   //200
+}
+else{
+	return Response.noContent().build();     //204
+}
 	}
 @GET
-@Path("{devid}/capabilities/{uid}")
+@Path("{devid}/check/capabilities/{uid}")
 @Produces(MediaType.APPLICATION_JSON)
 public Response getCapabilities(@Context UriInfo uriInfo,@PathParam("uid") String uid,@PathParam("devid") String devid) {
-	Model currentCap=ModelFactory.createDefaultModel();	
-	ArrayList<Capability>capabilities=queryService.getCapabilitiesStaff(devid,currentCap);
-	InferenceService.getService().changeCapabilities(currentCap, ModelController.TTT_GRAPH+devid+uid+"/temp");
-boolean isnew=	InferenceService.getService().compareCapabilities(ModelController.TTT_GRAPH+devid+uid+"/accepted", currentCap);
 
-
-	Capability[] capabilityArray= new Capability[capabilities.size()];
-	capabilityArray=capabilities.toArray(capabilityArray);
-	JSONArray jsonArray=new JSONArray();
-	for(Capability c:capabilities){
-	jsonArray.put(new JSONObject(c.toJson()));
-	}
-	
-	if(capabilities!=null){
-		if(!isnew){
-			return Response.noContent().entity(jsonArray.toString()).build();
-		}
-		return Response.ok().entity(jsonArray.toString()).build();
-	}
-	System.out.println("Desc NULL");
-return Response.noContent().entity(new CustomError(uriInfo.getPath(),"Request Capabilities failed").toJson()).build();
+	JSONObject newCapRequest=CapabilityMatchingService.capabilityMatch(devid, uid);
+	return Response.ok().entity(newCapRequest.toString()).build();
+		
 
 }
+
 
 
 
 @POST
 @Path("/register")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@Produces(MediaType.APPLICATION_JSON)
     public Response registerDevice(
     		@FormParam("dev_id") String id,
     		@FormParam("dev_name") String name,
@@ -288,7 +261,7 @@ System.out.println("Manweb:"+man_web);
 	//TODO : Addresss ....
 if(TDB.getIndependentModel(ModelController.TTT_GRAPH+id+"/data")!=null){
 	
-	return Response.status(Response.Status.FOUND).entity("This id is already taken!Try again").build();
+	return Response.status(Response.Status.FOUND).entity("This id is already taken!Try again").build(); //302
 }
 	ParameterizedSparqlString query=new ParameterizedSparqlString();
 	
@@ -361,12 +334,12 @@ if(TDB.getIndependentModel(ModelController.TTT_GRAPH+id+"/data")!=null){
 	
 	//registerDevice
 	TDB.registerDeviceData(ModelController.TTT_GRAPH+id+"/data",temp);
-	
-	
-	
+	JSONObject json=new JSONObject();
+	json.put("namespace", ModelController.TTT_GRAPH+id);
+	json.put("devid", id);
 	
 
-	return Response.status(Response.Status.OK).entity("Device registered. Please note down this url.To access your device visit "+Models.graphNS+id).build();
+	return Response.status(Response.Status.OK).entity(json).build();
 
 }
 }

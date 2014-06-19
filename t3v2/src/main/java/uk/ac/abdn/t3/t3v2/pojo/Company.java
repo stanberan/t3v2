@@ -10,6 +10,13 @@ String logo;
 String tel;
 String address;
 String email;
+String web;
+public String getWeb() {
+	return web;
+}
+public void setWeb(String web) {
+	this.web = web;
+}
 public String getUri() {
 	return uri;
 }
