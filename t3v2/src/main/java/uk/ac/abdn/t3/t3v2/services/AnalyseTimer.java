@@ -64,6 +64,8 @@ public class AnalyseTimer {
 			String message="Some capabilities for the "+d.getDevid()+"has changed.\nClick on this notification to retrieve them.";			
 	        JSONObject ob=new JSONObject();
 			ob.put("message", message);
+			ob.put("devid", d.getDevid());
+			ob.put("time", new Date().getTime());
 			
 			NotificationService.notifyUser(gcms.get(j), ob);
 		

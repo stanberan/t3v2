@@ -446,7 +446,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());
 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
 		        pdg.setType(ModelController.TTT_NS+"PersonalDataGeneration");
-		        pdg.setGeneratedBy_logo(cap.get("logo").asResource().getURI());
+		        pdg.setCompany_logo(cap.get("logo").asResource().getURI());
 		        	pdgs.add(pdg);
 		        }
 		        return filterPDG(pdgs); }
@@ -466,13 +466,14 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		ArrayList<PersonalDataSharing> pdgs=new ArrayList<PersonalDataSharing>();
 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 	query.setCommandText( ""
-				+ "SELECT ?data_desc ?type ?data_uri ?consumer_uri ?provider_uri ?purpose "
+				+ "SELECT ?data_desc ?logo ?data_uri ?consumer_uri ?provider_uri ?purpose "
 				+ "WHERE {"
 				+ "?pdc a ttt:PersonalDataSharing . "
 				+ "?pdc ttt:consumes ?data_uri . "
 			    +"?data_uri ttt:description ?data_desc . "
 				+ " ?pdc ttt:provider ?provider_uri ."
 				+ " ?pdc ttt:consumer ?consumer_uri ."
+                + "?consumer_uri foaf:logo ?logo ." 
 				+ " ?pdc ttt:purpose ?purpose ."
 				+ "   }");
 
@@ -489,6 +490,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		       pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
 		        pdg.setPurpose(cap.get("purpose").asLiteral().getString());
+		        pdg.setCompany_logo(cap.get("logo").asResource().getURI());
 		        
 		        pdg.setType(ModelController.TTT_NS+"PersonalDataSharing");
 		        
@@ -529,7 +531,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		 		        pdg.setProducer_uri(cap.get("provider_uri").asResource().getURI());
 		 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 		 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
-		 		        pdg.setConsumer_logo(cap.get("logo").asResource().getURI());
+		 		        pdg.setCompany_logo(cap.get("logo").asResource().getURI());
 		 		      pdg.setType(ModelController.TTT_NS+"PersonalDataCollection");
 		 		        	pdgs.add(pdg);
 		 		        }
@@ -547,12 +549,13 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		ArrayList<BillingCap> pdgs=new ArrayList<BillingCap>();
 			 		ParameterizedSparqlString query=new ParameterizedSparqlString();
 			 	query.setCommandText( ""
-			 				+ "SELECT ?data_desc ?data_uri ?provider_uri "
+			 				+ "SELECT ?data_desc ?data_uri ?logo ?provider_uri "
 			 				+ "WHERE {"
 			 				+ "?pdc a ttt:BillingCap. "
 			 				+ "?pdc ttt:consumes ?data_uri. "
 			 		    	+ "	?data_uri ttt:description ?data_desc . "   //type of bill
 			 				+ " ?pdc ttt:provider ?provider_uri ."
+			 				+ "?provider_uri foaf:logo ?logo ."
 			 				+ "   }");
 
 			 		 query.setNsPrefixes(ModelController.prefixes);
@@ -568,6 +571,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());     
 			 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
 			 		        pdg.setType(ModelController.TTT_NS+"BillingCap");
+			 		       pdg.setCompany_logo(cap.get("logo").asResource().getURI());
 			 		        	pdgs.add(pdg);
 			 		        }
 			 		        return filterBil(pdgs); }

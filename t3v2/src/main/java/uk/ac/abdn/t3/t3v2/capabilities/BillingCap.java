@@ -9,6 +9,14 @@ public class BillingCap implements Capability {
 	String producer_uri;   //AGENT who owns billing server!
 	String data_uri;
 	String data_desc;
+	String company_logo;
+	public String getCompany_logo() {
+		return company_logo;
+	}
+
+	public void setCompany_logo(String producer_logo) {
+		this.company_logo = producer_logo;
+	}
 	
 	public String getType() {
 		return type;

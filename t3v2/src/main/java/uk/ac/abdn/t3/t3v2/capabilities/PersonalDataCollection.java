@@ -15,16 +15,18 @@ public class PersonalDataCollection implements Capability{
 	String consumer_uri;
 	String data_uri;
 	String data_desc;
-	String consumer_logo;
-	
-	
-	
-	public String getConsumer_logo() {
-		return consumer_logo;
+	String company_logo;
+	public String getCompany_logo() {
+		return company_logo;
 	}
-	public void setConsumer_logo(String consumer_logo) {
-		this.consumer_logo = consumer_logo;
+
+	public void setCompany_logo(String producer_logo) {
+		this.company_logo = producer_logo;
 	}
+	
+	
+	
+	
 	public String getType() {
 		return type;
 	}

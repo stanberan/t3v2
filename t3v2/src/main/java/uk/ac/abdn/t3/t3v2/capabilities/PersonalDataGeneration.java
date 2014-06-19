@@ -12,18 +12,17 @@ public class PersonalDataGeneration implements Capability {
 	String dev_id;
 	String generatedBy;
 	String data_uri;
-	String generatedBy_logo;
-	
-	
-
-	public String getGeneratedBy_logo() {
-		return generatedBy_logo;
+	String company_logo;
+	public String getCompany_logo() {
+		return company_logo;
 	}
 
-	public void setGeneratedBy_logo(String generatedBy_logo) {
-		this.generatedBy_logo = generatedBy_logo;
+	public void setCompany_logo(String producer_logo) {
+		this.company_logo = producer_logo;
 	}
+	
 
+	
 	
 
 	public String getType() {

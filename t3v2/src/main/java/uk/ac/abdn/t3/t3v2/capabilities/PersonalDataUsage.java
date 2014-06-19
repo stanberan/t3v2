@@ -11,6 +11,14 @@ String dev_id;
 	String data_uri;
 	String data_desc;
 	String purpose;
+	String company_logo;
+	public String getCompany_logo() {
+		return company_logo;
+	}
+
+	public void setCompany_logo(String producer_logo) {
+		this.company_logo = producer_logo;
+	}
 	
 	public String getType() {
 		return type;
