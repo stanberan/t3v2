@@ -669,6 +669,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
 			 		       pdg.setPurpose(cap.get("purpose").asLiteral().getString());
 			 		       pdg.setType(ModelController.TTT_NS+"PersonalDataUsage");
+			 		       pdg.setCompany_logo(cap.get("consumer_logo").asResource().getURI());
 			 		        	pdgs.add(pdg);
 			 		        }
 			 		        return pdgs; }

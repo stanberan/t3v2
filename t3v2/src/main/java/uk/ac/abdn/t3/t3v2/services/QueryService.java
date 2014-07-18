@@ -56,6 +56,7 @@ public class QueryService {
 		ArrayList<Capability> capabilities=new ArrayList<Capability>();
 		
 		capabilities.addAll(generation);
+		System.out.println("GENERATION"+capabilities.toString());
 		capabilities.addAll(collection);
 		capabilities.addAll(consumption);
 		capabilities.addAll(usage);
@@ -66,22 +67,38 @@ public class QueryService {
 		
 	}
 	
-	  public ArrayList<Capability> getHeaders(OntModel ont, Model inf){
-	    	 ArrayList<Capability> all=getCapabilitiesArray(ont,inf);
+		public Capability containsCap(ArrayList<Capability>cap, Capability c){
+			for(int i=0;i<cap.size();i++){
+			 if(cap.get(i).getType().equals(c.getType())){
+				 return cap.get(i);
+			 }
+			}
+			return null;
+		}
+	
+	  public ArrayList<Capability> getHeaders(ArrayList<Capability>cap){
+	
 	    	 ArrayList<Capability> headers=new ArrayList<Capability>();
-	    	 for(Capability c: all){
-	    		for(Capability h: headers){
-	    			if(!h.compareHeaders(c)){
-	    				headers.add(c);
-	    			
+	    	 if(headers.size()==0 &&cap.size()!=0){
+    			 headers.add(cap.get(0));
+    		 }
+	    	 for(int i=0; i<cap.size();i++){
+	    		Capability c=cap.get(i);
+	    			Capability found=containsCap(cap,c);
+	    			if(found!=null){
+	    				if(c.getType().equals(found.getType())&&!c.getCompany_logo().equals(found.getCompany_logo())){
+	    					headers.add(c);
+	    				}
 	    			}
-	    		
+	    			else{
+	    				headers.add(c);
+	    			}
 	    		}
-	    	 }	    	 
+	    	     	 
 	    	 if(headers.size() != 0){
 	    		 return headers;
 	    	 }
-	    	 return null;
+	    	 return headers;
 	  }
 	    		 
 

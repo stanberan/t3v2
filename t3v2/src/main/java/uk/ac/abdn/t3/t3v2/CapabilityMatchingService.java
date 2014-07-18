@@ -59,14 +59,21 @@ public class CapabilityMatchingService {
 	
 		//for interface
 	//CHANGE old
-		//	ArrayList<Capability>acceptedCapabilityArray=queryService.getCapabilitiesArray(mainModel,acceptedCap);
+			ArrayList<Capability>acceptedCapabilityArray=queryService.getCapabilitiesArray(mainModel,acceptedCap);
 			
 	//HEADERS
-			ArrayList<Capability>currentHeaders=queryService.getHeaders(mainModel, currentCap);
-			ArrayList<Capability>acceptedHeaders=queryService.getHeaders(mainModel, acceptedCap);
+			ArrayList<Capability>currentHeaders=queryService.getHeaders(currentCapabilitiesArray);
+			System.out.println("HEADERS CURRENT"+currentHeaders.size()+currentHeaders.toString());
+			ArrayList<Capability>acceptedHeaders=queryService.getHeaders(acceptedCapabilityArray);
+			System.out.println("HEADERS CURRENT"+acceptedHeaders.size()+acceptedHeaders.toString());
 		
-			
-			return getNewCapabilities(currentHeaders,acceptedHeaders);
+			JSONArray h=new JSONArray();
+			for(Capability c: currentHeaders){
+				h.put(new JSONObject(c.toJson()));
+			}
+			JSONObject j= getNewCapabilities(currentCapabilitiesArray,acceptedCapabilityArray);
+			j.put("headers", h);
+			return j;
 	//	return getNewCapabilities(currentCapabilitiesArray,acceptedCapabilityArray);
 		
 			

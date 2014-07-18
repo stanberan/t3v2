@@ -85,7 +85,7 @@ public class PersonalDataCollection implements Capability{
 		return ((PersonalDataCollection) o).getConsumer_uri().equals(this.getConsumer_uri());
 	
 		}
-		return false;
+		return true;
 	
 	}
 	   public boolean equals(Object object)

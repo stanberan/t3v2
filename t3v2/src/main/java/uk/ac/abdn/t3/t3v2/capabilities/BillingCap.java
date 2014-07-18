@@ -73,7 +73,7 @@ public class BillingCap implements Capability {
 		return ((BillingCap) o).getProducer_uri().equals(this.getProducer_uri());
 	
 		}
-		return false;
+		return true;
 	
 	}
 	   public boolean equals(Object object)

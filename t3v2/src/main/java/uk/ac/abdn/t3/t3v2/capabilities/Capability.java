@@ -5,7 +5,7 @@ package uk.ac.abdn.t3.t3v2.capabilities;
 		
 		
 		
-		
+	public String getCompany_logo();	
 	public String toJson();
 	public String getType();	
 	public boolean compareHeaders(Object o);

@@ -86,7 +86,7 @@ public class PersonalDataGeneration implements Capability {
 		return ((PersonalDataGeneration) o).getGeneratedBy().equals(this.getGeneratedBy());
 	
 		}
-		return false;
+		return true;
 	
 	}
 	

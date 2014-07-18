@@ -85,7 +85,7 @@ public class PersonalDataSharing implements Capability {
 		return ((PersonalDataSharing) o).getConsumer_uri().equals(this.getConsumer_uri());
 	
 		}
-		return false;
+		return true;
 	
 	}
 	

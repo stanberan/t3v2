@@ -83,7 +83,7 @@ String dev_id;
 		return ((PersonalDataUsage) o).getConsumer_uri().equals(this.getConsumer_uri());
 	
 		}
-		return false;
+		return true;
 	
 	}
 	
