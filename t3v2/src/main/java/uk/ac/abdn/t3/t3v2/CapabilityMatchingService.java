@@ -34,7 +34,7 @@ public class CapabilityMatchingService {
 	
 		Model currentCap=ModelFactory.createDefaultModel();	
 		inferenceService.inferCapabilities(mainModel, currentCap);
-		
+
 		
 		
 		

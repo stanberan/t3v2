@@ -92,7 +92,8 @@ public class BillingCap implements Capability {
 	       return false;
 	    }
 	   public int hashCode(){
-			  String str=this.getDev_id()+this.getData_desc()+this.getProducer_uri();
-			return str.hashCode() ;}
+			return 0;
+		
+		   }
 
 }

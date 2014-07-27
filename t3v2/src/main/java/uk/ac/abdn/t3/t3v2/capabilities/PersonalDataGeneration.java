@@ -107,8 +107,7 @@ public class PersonalDataGeneration implements Capability {
 	       return false;
 	    }
 	   public int hashCode(){
-			  String str=this.getData_desc()+this.getGeneratedBy();
-			return str.hashCode() ;}
-	
-	
+			return 0;
+		
+		   }
 }

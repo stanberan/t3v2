@@ -69,7 +69,7 @@ public class QueryService {
 	
 		public Capability containsCap(ArrayList<Capability>cap, Capability c){
 			for(int i=0;i<cap.size();i++){
-			 if(cap.get(i).getType().equals(c.getType())){
+			 if(cap.get(i).getType().equals(c.getType()) && cap.get(i).getCompany_logo().equals(c.getCompany_logo())){
 				 return cap.get(i);
 			 }
 			}
@@ -84,16 +84,11 @@ public class QueryService {
     		 }
 	    	 for(int i=0; i<cap.size();i++){
 	    		Capability c=cap.get(i);
-	    			Capability found=containsCap(cap,c);
-	    			if(found!=null){
-	    				if(c.getType().equals(found.getType())&&!c.getCompany_logo().equals(found.getCompany_logo())){
-	    					headers.add(c);
+	    			Capability found=containsCap(headers,c);
+	    			if(found==null){
+	    				headers.add(c);
 	    				}
 	    			}
-	    			else{
-	    				headers.add(c);
-	    			}
-	    		}
 	    	     	 
 	    	 if(headers.size() != 0){
 	    		 return headers;

@@ -105,10 +105,8 @@ String dev_id;
 	       return false;
 	    }
 	
-	  public int hashCode(){
-		  String str=this.getDev_id()+this.getData_desc()+this.getConsumer_uri();
-		return str.hashCode() ;
-		  
-		  
-	  }
+	   public int hashCode(){
+			return 0;
+		
+		   }
 }

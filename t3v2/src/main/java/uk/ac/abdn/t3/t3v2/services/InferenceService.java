@@ -105,7 +105,7 @@ public class InferenceService {
 		//ontDeviceModel.write(System.out, "TTL");
 		ontDeviceModel.addSubModel(TTT);
 		System.out.println("AFTER");
-	//	ontDeviceModel.write(System.out, "TTL");
+		ontDeviceModel.write(System.out, "TTL");
 	
 		return ontDeviceModel;
 				
@@ -127,10 +127,8 @@ public class InferenceService {
 	}
 	public void inferCapabilities(OntModel deviceOntModel, Model inferedCapabilities){
 		SPINModuleRegistry.get().init();
-		if(first){
 		SPINModuleRegistry.get().registerAll(deviceOntModel, null);
-		first=false;
-		}
+		
 		SPINInferences.run(deviceOntModel, inferedCapabilities, null, null,true, null); 
 	
 	 
