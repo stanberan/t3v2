@@ -194,6 +194,7 @@ public Response getCompanies(@PathParam("devid") String devid) {
 ArrayList<Company> companies=InferenceService.getService().getCompanies(InferenceService.getService().getDeviceOntModel(devid));  
 JSONArray jsonArray=new JSONArray();
 for(Company c: companies){
+	
 jsonArray.put(new JSONObject(c.toJson()));
 }	
 if(jsonArray.length()!=0){

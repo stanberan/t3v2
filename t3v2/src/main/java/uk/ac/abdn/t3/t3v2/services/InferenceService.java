@@ -339,8 +339,6 @@ ArrayList<Company>companies =new ArrayList<Company>();
 					+ "SELECT ?uri ?logo ?name ?tel ?url ?email ?address "
 					+ "WHERE {"
 					+ "?uri a foaf:Organization . "
-					+ "?controller prov:actedOnBehalfOf ?uri . "
-					+ "?activity prov:wasAssociatedWith ?controller . "
 					+ "OPTIONAL{?uri foaf:name ?name .} "
 					+ "	OPTIONAL {?uri ns:hasAddress ?address . }"
 					+ " OPTIONAL {?uri foaf:phone ?tel .}"

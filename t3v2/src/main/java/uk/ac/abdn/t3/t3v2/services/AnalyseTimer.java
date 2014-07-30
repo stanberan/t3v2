@@ -60,9 +60,10 @@ public class AnalyseTimer {
 				String userid=users.get(j);
 				//check
 		JSONObject jsondata=CapabilityMatchingService.capabilityMatch(d.getDevid(), userid);
-			if(jsondata.has("newcapabilities")){
+			if(jsondata.has("newCapabilities")){
 			String message="Some capabilities for the "+d.getDevid()+"has changed.\nClick on this notification to retrieve them.";			
 	        JSONObject ob=new JSONObject();
+	        ob.put("headers",jsondata.getJSONArray("currentHeaders"));
 			ob.put("message", message);
 			ob.put("devid", d.getDevid());
 			ob.put("time", new Date().getTime());

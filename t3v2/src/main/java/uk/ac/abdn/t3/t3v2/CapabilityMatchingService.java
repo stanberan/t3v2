@@ -65,14 +65,21 @@ public class CapabilityMatchingService {
 			ArrayList<Capability>currentHeaders=queryService.getHeaders(currentCapabilitiesArray);
 			System.out.println("HEADERS CURRENT"+currentHeaders.size()+currentHeaders.toString());
 			ArrayList<Capability>acceptedHeaders=queryService.getHeaders(acceptedCapabilityArray);
-			System.out.println("HEADERS CURRENT"+acceptedHeaders.size()+acceptedHeaders.toString());
+			System.out.println("HEADERS ACCEPTED"+acceptedHeaders.size()+acceptedHeaders.toString());
 		
 			JSONArray h=new JSONArray();
 			for(Capability c: currentHeaders){
 				h.put(new JSONObject(c.toJson()));
 			}
+			
+			JSONArray a=new JSONArray();
+			for(Capability c: acceptedHeaders){
+				a.put(new JSONObject(c.toJson()));
+			}
+			
 			JSONObject j= getNewCapabilities(currentCapabilitiesArray,acceptedCapabilityArray);
-			j.put("headers", h);
+			j.put("currentHeaders", h);
+			j.put("acceptedHeaders", a);
 			return j;
 	//	return getNewCapabilities(currentCapabilitiesArray,acceptedCapabilityArray);
 		
@@ -123,7 +130,7 @@ System.out.println("New capability detected"+current.toJson());
 		newCapJson.put(new JSONObject(c.toJson()));
 		}
 
-		jsondata.put("newcapabilities", newCapJson);
+		jsondata.put("newCapabilities", newCapJson);
 
 		}
 		
