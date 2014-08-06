@@ -44,7 +44,7 @@ public class AnalyseTimer {
 
     private class LoopTask extends TimerTask {
     public void run() {
-   
+
     	System.out.println("Executing: Checking provenance "+delay);
     	
     	System.out.println("Getting all devices...");
