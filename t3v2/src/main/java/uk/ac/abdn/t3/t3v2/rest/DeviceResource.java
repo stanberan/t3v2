@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import uk.ac.abdn.t3.t3v2.CapabilityMatchingService;
 import uk.ac.abdn.t3.t3v2.Models;
+import uk.ac.abdn.t3.t3v2.PolicyData;
 import uk.ac.abdn.t3.t3v2.RDFData;
 import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.capabilities.Capability;
@@ -47,6 +48,7 @@ import uk.ac.abdn.t3.t3v2.pojo.DeviceDescription;
 import uk.ac.abdn.t3.t3v2.pojo.PersonalData;
 import uk.ac.abdn.t3.t3v2.services.InferenceService;
 import uk.ac.abdn.t3.t3v2.services.NotificationService;
+import uk.ac.abdn.t3.t3v2.services.PolicyService;
 import uk.ac.abdn.t3.t3v2.services.QueryService;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -109,6 +111,39 @@ catch(Exception e){
         
         
     }
+
+@POST
+@Path("/check/policy/{deviceid}")
+    public Response checkPolicy(@PathParam("deviceid") String device_id,String body ) {
+      System.out.println(body);
+try{
+	ObjectMapper mapper=new ObjectMapper();
+    	mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+   RDFData dat=mapper.readValue(body,RDFData.class);
+   String inputdata=dat.body;
+   InputStream stream = new ByteArrayInputStream(inputdata.getBytes(StandardCharsets.UTF_8));
+   
+   Model temp=ModelFactory.createDefaultModel();
+   temp.read(stream,null,"TTL");
+   System.out.println("From model object:");
+   //temp.write(System.out, "TTL");
+  OntModel m= InferenceService.getService().getDeviceOntModel(device_id);
+  m.add(temp);
+  
+  //check against policy
+ boolean data= PolicyService.checkPolicy(device_id, m);
+        
+   		
+}
+catch(Exception e){
+	return Response.notModified().entity(new CustomError("uploadprov","Exception whenuploading provenance"+e.getMessage())).build();
+}
+        return Response.accepted().entity("Accepted").build();
+        
+        
+    }
+
+
 
 @GET
 @Path("{deviceid}/{type}")
@@ -338,6 +373,9 @@ if(TDB.getIndependentModel(ModelController.TTT_GRAPH+id+"/data")!=null){
 	JSONObject json=new JSONObject();
 	json.put("namespace", ModelController.TTT_GRAPH+id);
 	json.put("devid", id);
+	json.put("uploadProv", ModelController.TTT_GRAPH+"upload/"+id+"/prov");
+	json.put("registerService", ModelController.TTT_GRAPH+"upload/"+id+"/data");
+	
 	
 
 	return Response.status(Response.Status.OK).entity(json).build();
