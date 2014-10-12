@@ -136,7 +136,7 @@ try{
    		
 }
 catch(Exception e){
-	return Response.notModified().entity(new CustomError("uploadprov","Exception whenuploading provenance"+e.getMessage())).build();
+	return Response.notModified().entity(new CustomError("uploadprov","Exception when checking policy"+e.getMessage())).build();
 }
         return Response.accepted().entity("Accepted").build();
         
@@ -173,6 +173,7 @@ public Response getGraph(@PathParam("deviceid") String id,@PathParam("type") Str
 }
 
 //dd
+
 
 @GET
 @Path("{devid}/description/")

@@ -94,6 +94,35 @@ public boolean deviceExist(Device u){
 		}
 }
 
+
+public ArrayList<Dev> getList(String user){
+		
+		ArrayList<Dev> devices=new ArrayList<Dev>();
+		try{
+			if(conn.isClosed()){
+				conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
+			}
+			PreparedStatement pStatement=conn.prepareStatement("SELECT * FROM accepted WHERE userid=?");
+			pStatement.setString(1,user);	
+			ResultSet rs= pStatement.executeQuery();
+			while(rs.next()){
+				System.out.println("HAS NEXT DEVICE UID");
+				Dev d=new Dev();
+				d.setId(rs.getString("iotuid"));
+				d.setNickname(rs.getString("nickname"));
+					devices.add(d);	
+			}
+			return devices;
+		}
+			catch(Exception e){
+				e.printStackTrace();
+				return devices;
+			}
+		
+		
+	}
+
+
 public boolean accepted(String devid,String userid){
 	try{
 		if(conn.isClosed()){

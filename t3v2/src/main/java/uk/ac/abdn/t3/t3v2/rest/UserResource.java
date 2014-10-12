@@ -37,6 +37,18 @@ public class UserResource {
 	   return Response.noContent().entity(new CustomError("registerUser","Users gcm not updated").toJson()).build();
 		
 	}
+	@GET
+	@Path("/get/devices/{userid}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getListDevices(@PathParam ("userid") String userid){
+	
+		
+	
+	  
+	   
+	   return Response.noContent().entity(new CustomError("registerUser","Users gcm not updated").toJson()).build();
+		
+	}
 	
 /*
 @Path("compare/{type}")

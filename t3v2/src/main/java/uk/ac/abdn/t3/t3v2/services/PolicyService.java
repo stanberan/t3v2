@@ -10,7 +10,7 @@ public class PolicyService {
 	
 	public static boolean checkPolicy(String deviceid, Model newprovenancegraph){
 		
-		Model policies=getPolicies(deviceid);
+	//	Model policies=getPolicies(deviceid);
 		
 		
 		

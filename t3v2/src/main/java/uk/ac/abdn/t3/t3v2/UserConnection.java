@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+
 public class UserConnection {
 static{
 	System.setProperty("http.proxyHost", "proxy.abdn.ac.uk");
@@ -42,7 +43,32 @@ static{
     	  }
     	  }
       }
-      
+      public ArrayList<Dev> getList(String user){
+  		
+  		ArrayList<Dev> devices=new ArrayList<Dev>();
+  		try{
+  			if(conn.isClosed()){
+  				conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
+  			}
+  			PreparedStatement pStatement=conn.prepareStatement("SELECT * FROM accepted WHERE deviceuid=?");
+  			pStatement.setString(1,user);	
+  			rs= pStatement.executeQuery();
+  			while(rs.next()){
+  				System.out.println("HAS NEXT DEVICE UID");
+  				Dev d=new Dev();
+  				d.setId(rs.getString("iotuid"));
+  				d.setNickname(rs.getString("nickname"));
+  					devices.add(d);	
+  			}
+  			return devices;
+  		}
+  			catch(Exception e){
+  				e.printStackTrace();
+  				return devices;
+  			}
+  		
+  		
+  	}
 	
 	public boolean registerOrUpdateToken(int id, String token) throws Exception{
 		PreparedStatement pStatement=conn.prepareStatement("INSERT into tokens values(?,?)");
