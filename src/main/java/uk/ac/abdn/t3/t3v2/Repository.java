@@ -83,14 +83,15 @@ public class Repository {
 		}
 	 }
 	 
-	 public void preloadData(){
+	 private void loadData(String devid){
 			Model m=ModelFactory.createDefaultModel();
-			m.read("http://t3.abdn.ac.uk/ontologies/simbbox001.ttl",null,"TTL");
-			registerDeviceData(ModelController.TTT_GRAPH+"simbbox001"+"/data", m);
-			Model m1=ModelFactory.createDefaultModel();
-			m1.read("http://t3.abdn.ac.uk/ontologies/simbbox002.ttl",null,"TTL");
-			registerDeviceData(ModelController.TTT_GRAPH+"simbbox002"+"/data", m);
-			
+			m.read("http://t3.abdn.ac.uk/ontologies/"+devid+".ttl",null,"TTL");
+			registerDeviceData(ModelController.TTT_GRAPH+devid+"/data", m);
+	 }
+	 public void preloadData(){
+		for(int i=1 ;i<5 ;i++){
+			loadData("simbbox00"+i);
+		}			
 		}
 	 
 	 public boolean addToGraph(Model m,String graph){

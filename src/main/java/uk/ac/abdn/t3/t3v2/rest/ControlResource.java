@@ -86,6 +86,7 @@ public class ControlResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String notificationStop(){
 	notificationServiceTimer.stopTimer();
+	notificationServiceTimer=null;
 	return"Notification Service Stopped";
 	}
 

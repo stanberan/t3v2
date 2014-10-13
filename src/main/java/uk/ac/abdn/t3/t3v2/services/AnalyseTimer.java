@@ -20,7 +20,7 @@ import uk.ac.abdn.t3.t3v2.models.ModelController;
 import uk.ac.abdn.t3.t3v2.pojo.Device;
 
 public class AnalyseTimer {
-	
+
 	InferenceService inferenceService=InferenceService.getService();
 	QueryService queryService=QueryService.getSingleton();
 	static DB db=DB.getDB();

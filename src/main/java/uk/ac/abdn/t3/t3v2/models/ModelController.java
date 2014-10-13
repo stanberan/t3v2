@@ -33,7 +33,7 @@ static{
 	final static String TTT="http://t3.abdn.ac.uk/ontologies/t3v2.owl";
 	final static String PROV="http://www.w3.org/ns/prov";
 	final static String IOTA="http://t3.abdn.ac.uk/ontologies/iota.owl";
-	//final static String RULES="http://t3.abdn.ac.uk/ontologies/rules.owl";
+	final static String RULES="http://t3.abdn.ac.uk/ontologies/policy.owl";
 	
 	public final static String INSTANCE_NS="http://t3.abdn.ac.uk/ontologies/instancedata.owl#";
 	public final static String TTT_NS="http://t3.abdn.ac.uk/ontologies/t3.owl#";
