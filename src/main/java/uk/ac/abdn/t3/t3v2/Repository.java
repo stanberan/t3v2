@@ -85,7 +85,10 @@ public class Repository {
 	 
 	 private void loadData(String devid){
 			Model m=ModelFactory.createDefaultModel();
-			m.read("http://t3.abdn.ac.uk/ontologies/"+devid+".ttl",null,"TTL");
+			System.getProperties().put("proxySet","true");
+			   System.getProperties().put("proxyHost","proxy.abdn.ac.uk");
+			   System.getProperties().put("proxyPort",8080);
+			m.read("http://139.133.80.15/ontologies/"+devid+".ttl",null,"TTL");
 			registerDeviceData(ModelController.TTT_GRAPH+devid+"/data", m);
 	 }
 	 public void preloadData(){
