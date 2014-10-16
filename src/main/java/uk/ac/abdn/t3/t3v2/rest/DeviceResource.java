@@ -177,7 +177,7 @@ public Response getGraph(@PathParam("deviceid") String id,@PathParam("type") Str
 
 @GET
 @Path("{devid}/description/")
-@Produces(MediaType.TEXT_PLAIN)
+@Produces(MediaType.APPLICATION_JSON)
 public Response getDescription(@Context UriInfo uriInfo,@PathParam("devid") String devid) {
     
 	DeviceDescription desc=queryService.getDeviceDescription(devid);
