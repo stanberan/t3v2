@@ -31,7 +31,7 @@ public class CapabilityMatchingService {
 
 		OntModel mainModel=inferenceService.getDeviceOntModel(devid);
 		//placeholder for
-	
+	//mainModel.write(System.out,"TTL");
 		Model currentCap=ModelFactory.createDefaultModel();	
 		inferenceService.inferCapabilities(mainModel, currentCap);
 
@@ -42,14 +42,14 @@ public class CapabilityMatchingService {
 		//geet realtime cap of device
 		ArrayList<Capability>currentCapabilitiesArray=queryService.getCapabilitiesArray(mainModel,currentCap);
 	   System.out.println("XXXXXXXXXXXXXXXXCURRENT CAPABILITIESXXXXXXXXXXXXXX");
-		currentCap.write(System.out,"TTL");
+	//	currentCap.write(System.out,"TTL");
 		//add it to the list of temporary capabilities for the user and device
 		inferenceService.changeTemporaryCap(currentCap, ModelController.TTT_GRAPH+devid+uid+"/temp");
 		//get accepted capabilities of user for the specific iot device.
 		Model acceptedCap=inferenceService.getAcceptedCapabilities(uid,devid);
 		   System.out.println("XXXXXXXXXXXXXXXXACCEPTEDXXXXXXXXXXXXXX");
 			if(acceptedCap!=null){
-		   acceptedCap.write(System.out,"TTL");
+	//	   acceptedCap.write(System.out,"TTL");
 			}
 	//	boolean different=inferenceService.compareCapabilities(acceptedCap, currentCap);
 		//getAcceptedCapabilities of the Device
@@ -114,7 +114,7 @@ System.out.println("New capability detected"+current.toJson());
 		}
 		
 		
-		jsondata.put("currentCapabilities", currentCapJson);
+	//	jsondata.put("currentCapabilities", currentCapJson);
 		
 		if(newCapabilities.size()==0){
 			jsondata.put("different", false);
@@ -130,7 +130,7 @@ System.out.println("New capability detected"+current.toJson());
 		newCapJson.put(new JSONObject(c.toJson()));
 		}
 
-		jsondata.put("newCapabilities", newCapJson);
+	//	jsondata.put("newCapabilities", newCapJson);
 
 		}
 		

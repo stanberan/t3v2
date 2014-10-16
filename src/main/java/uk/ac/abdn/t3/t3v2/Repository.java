@@ -88,7 +88,7 @@ public class Repository {
 			System.getProperties().put("proxySet","true");
 			   System.getProperties().put("proxyHost","proxy.abdn.ac.uk");
 			   System.getProperties().put("proxyPort",8080);
-			m.read("http://139.133.80.15/ontologies/"+devid+".ttl",null,"TTL");
+			m.read("http://t3.abdn.ac.uk/ontologies/"+devid+".ttl",null,"TTL");
 			registerDeviceData(ModelController.TTT_GRAPH+devid+"/data", m);
 	 }
 	 public void preloadData(){
@@ -103,7 +103,7 @@ public class Repository {
 		 dataset.begin(ReadWrite.WRITE);
 	 Model g=dataset.getNamedModel(graph);
 	 System.out.println("PASSED MODEL");
-	 m.write(System.out,"TURTLE");
+//	 m.write(System.out,"TURTLE");
 		g.add(m);
 		dataset.commit();
 		return true;

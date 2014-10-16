@@ -29,10 +29,10 @@ public class NotificationService {
 		//   System.getProperties().put("proxyHost","proxy.abdn.ac.uk");
 	//	   System.getProperties().put("https.proxyHost","proxy.abdn.ac.uk");
 		//   System.getProperties().put("https.proxyPort",8080);
-		   System.setProperty("https.proxyHost", "proxy.abdn.ac.uk");
-		   System.setProperty("http.proxyHost", "proxy.abdn.ac.uk");
-		   System.setProperty("https.proxyPort","8080");
-		   System.setProperty("https.proxyPort","8080");
+		//   System.setProperty("https.proxyHost", "proxy.abdn.ac.uk");
+		//   System.setProperty("http.proxyHost", "proxy.abdn.ac.uk");
+		//   System.setProperty("https.proxyPort","8080");
+		//   System.setProperty("https.proxyPort","8080");
 		String key="AIzaSyBXB-j11raRKF6coCDoT39P4roqHjSETWc";
 		 DefaultHttpClient httpclient = new DefaultHttpClient();
 		 HttpHost proxy=new HttpHost("proxy.abdn.ac.uk",8080);
@@ -63,7 +63,7 @@ public class NotificationService {
 	      }
 	    }
 	public static void main (String args[]){
-		NotificationService.notifyUser("APA91bEIQ-GebKhUOXHhZ0qUhpSJavOjd9j0bajoAgBogVpLMa05QFu6LRNvdEoXGjf79hkXTXNDrQ9b2Qn6Zgw4te4oG9uPfc5sj1H5xTJ2EJPNne5dtryhgQTA9_qngyIHWAn4iF73iY78cfgFBlGnRr2wPK7cSg", new JSONObject("{\"cap\":\"new capabilities\"}"));
+		NotificationService.notifyUser("APA91bHSGYQgnQ2fwM0plAkDvHfDvMwWBtrZqiCu9OT3xAVZpDtr7_Ps2fasXE2EnF5kYdZ_CQ2fGh7U1wmhD8M4i4mrM3501wY2p4qyET46ZXfInicXD7mxrU_CQQXsh7dv7uEPFdTEqVeTBUWSM-g-bFFswx5Ljw", new JSONObject("{\"cap\":\"new capabilities\"}"));
 	}
 		
 	}

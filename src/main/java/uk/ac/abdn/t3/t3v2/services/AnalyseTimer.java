@@ -24,11 +24,13 @@ public class AnalyseTimer {
 	InferenceService inferenceService=InferenceService.getService();
 	QueryService queryService=QueryService.getSingleton();
 	static DB db=DB.getDB();
-	
+	ArrayList<Device> devices;
+	ArrayList<String> gcms;
+	ArrayList<String> users;
 	long delay = 10*60*1000; // ms
     LoopTask task = new LoopTask();
     Timer timer = new Timer("TaskName");
-
+    Device d;
     public AnalyseTimer(int minutes){
     	if(minutes!=0 && minutes>0){
     	
@@ -48,19 +50,19 @@ public class AnalyseTimer {
     	System.out.println("Executing: Checking provenance "+delay);
     	
     	System.out.println("Getting all devices...");
-    	ArrayList<Device> devices=db.getAllDevices();
+    	devices=db.getAllDevices();
 			
     	
 		for(int i=0;i<devices.size();i++){
-			Device d=devices.get(i);		
+			d=devices.get(i);		
 			
-			ArrayList<String> users=d.getUsers();
-			ArrayList<String> gcms=d.getGoogleId();
+			users=d.getUsers();
+			gcms=d.getGoogleId();
 			for(int j=0; j<users.size();j++){
 				String userid=users.get(j);
 				//check
 		JSONObject jsondata=CapabilityMatchingService.capabilityMatch(d.getDevid(), userid);
-			if(jsondata.has("newCapabilities")){
+			if(jsondata.has("currentHeaders")){
 			String message="Some capabilities for the "+d.getDevid()+"has changed.\nClick on this notification to retrieve them.";			
 	        JSONObject ob=new JSONObject();
 	        ob.put("headers",jsondata.getJSONArray("currentHeaders"));

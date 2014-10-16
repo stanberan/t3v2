@@ -105,7 +105,7 @@ public class InferenceService {
 		//ontDeviceModel.write(System.out, "TTL");
 		ontDeviceModel.addSubModel(TTT);
 		System.out.println("AFTER");
-		ontDeviceModel.write(System.out, "TTL");
+		//ontDeviceModel.write(System.out, "TTL");
 	
 		return ontDeviceModel;
 				
@@ -126,12 +126,13 @@ public class InferenceService {
 		
 	}
 	public void inferCapabilities(OntModel deviceOntModel, Model inferedCapabilities){
+		System.out.println("Entered Inference:"+deviceOntModel.size());
 		SPINModuleRegistry.get().init();
 		SPINModuleRegistry.get().registerAll(deviceOntModel, null);
 		
 		SPINInferences.run(deviceOntModel, inferedCapabilities, null, null,true, null); 
 	
-	 
+		System.out.println("Exited Inference");
 	//TDB.addToGraph(inference, Models.graphNS+"usersimbbox001/"+type);
 	
 		
@@ -143,11 +144,11 @@ public class InferenceService {
 		TDB.removeNamedGraph(accGraph);
 		System.out.println("Getting current accepted"+newGraph);
 		Model m=TDB.getIndependentModel(newGraph);
-		m.write(System.out,"TTL");
+	//	m.write(System.out,"TTL");
 		System.out.println("Accepted capabilities add...XXXXXXXXXXXXXXXFrommodel"+accGraph);
 		TDB.addToGraph(m, accGraph);
 		Model c=TDB.getIndependentModel(accGraph);
-		c.write(System.out,"TTL");
+	//	c.write(System.out,"TTL");
 		System.out.println("Accepted Capabilities removed and updated!"+accGraph);
 		
 	}
@@ -182,7 +183,7 @@ public class InferenceService {
 			    if(!difference.isEmpty()){ 
 			    
 			    System.out.println("Difference");
-			    difference.write(System.out,"TTL");
+		//	    difference.write(System.out,"TTL");
 			    //compute cap and send notification to user. 
 			
 			    }

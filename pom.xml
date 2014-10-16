@@ -29,7 +29,7 @@
                 <version>2.2</version>
                 <configuration>
                     <url>http://t3.abdn.ac.uk:8080/manager/text</url>
-                    <server>crowd</server>
+                    <server>t3</server>
                     <path>/t3v2</path>
                 </configuration>
             </plugin>

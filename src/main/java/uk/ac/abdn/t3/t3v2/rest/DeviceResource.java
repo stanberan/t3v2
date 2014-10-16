@@ -367,7 +367,7 @@ if(TDB.getIndependentModel(ModelController.TTT_GRAPH+id+"/data")!=null){
 	UpdateAction.execute(parsedQuery, temp);
 	
 	
-	temp.write(System.out,"N3");
+	//temp.write(System.out,"N3");
 	
 	//registerDevice
 	TDB.registerDeviceData(ModelController.TTT_GRAPH+id+"/data",temp);

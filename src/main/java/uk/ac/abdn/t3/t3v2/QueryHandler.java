@@ -59,7 +59,7 @@ Model graph=ModelFactory.createDefaultModel();
 		
 		
 		boolean b= TDB.addToGraph(graph, busgraph);
-		TDB.getIndependentModel(busgraph).write(System.out,"TURTLE");
+	//	TDB.getIndependentModel(busgraph).write(System.out,"TURTLE");
 		return b;
 		
 	
