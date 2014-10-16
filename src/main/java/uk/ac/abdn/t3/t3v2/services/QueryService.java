@@ -60,7 +60,6 @@ public class QueryService {
 		capabilities.addAll(collection);
 		capabilities.addAll(consumption);
 		capabilities.addAll(usage);
-		capabilities.addAll(generation);
 		capabilities.addAll(billing);
 		
 		return capabilities;

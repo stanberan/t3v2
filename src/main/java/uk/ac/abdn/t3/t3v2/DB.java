@@ -108,7 +108,7 @@ public ArrayList<Dev> getList(String user){
 			while(rs.next()){
 				System.out.println("HAS NEXT DEVICE UID");
 				Dev d=new Dev();
-				d.setId(rs.getString("iotuid"));
+				d.setId(rs.getString("devid"));
 				d.setNickname(rs.getString("nickname"));
 					devices.add(d);	
 			}
@@ -147,16 +147,17 @@ public boolean accepted(String devid,String userid){
 	
 
 
-public boolean associateDevAndUser(String devid,String userid){
+public boolean associateDevAndUser(String devid,String userid,String nickname){
 
 	try{
 		if(conn.isClosed()){
 			conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
 		}
 		if(!accepted(devid,userid)){
-		PreparedStatement pStatement=conn.prepareStatement("INSERT into accepted values(?,?)");
+		PreparedStatement pStatement=conn.prepareStatement("INSERT into accepted values(?,?,?)");
 		pStatement.setString(1, devid);
 		pStatement.setString(2, userid);
+		pStatement.setString(3, nickname);
 		
 	int i=pStatement.executeUpdate();
 	System.out.println("IoT Device:"+devid +"was associated with user with new cap"+userid);
@@ -172,7 +173,7 @@ public boolean associateDevAndUser(String devid,String userid){
 	System.out.println("No association.");
 	return false;
 }
-	
+/*	
 public boolean registerDevice(Device d){
 	
 	
@@ -198,7 +199,7 @@ public boolean registerDevice(Device d){
 	System.out.println("Device not registered.");
 	return false;
 		
-}
+}*/
 public boolean registerUpdateUser(User u){
 	
 	try{

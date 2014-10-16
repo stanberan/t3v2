@@ -62,42 +62,7 @@ static Repository TDB=Repository.getSingleton();
 
 	
 	
-	@GET
-	  @Path("/accepted/{device}/{iotdevice}")
-	@Produces({MediaType.APPLICATION_JSON})
-	  public Response accepted(@PathParam("device") String device, @PathParam("iotdevice") String iotDevice, @QueryParam("busurl") String busURL){
-		
-		try {
-			//for stats!!
-		//	conn.registerScan(device,iotDevice,new Date());
-			//
-			if(busURL!=null && busURL.contains("deps.at")){
-			QueryHandler.registerBustStopTag(iotDevice, busURL);
-			
-			
-			String time=Models.conn.accepted(device, iotDevice);
-			if(time!=null){
-				
-				String accepted="{'accepted':'"+time +"'}";
-				
-				
-				return Response.ok(accepted).build();
-			}
-			else if(busURL!=null && busURL.contains(Models.graphNS)){
-				
-				return Response.status(Response.Status.NOT_FOUND).build();
-				
-				
-			}
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(Response.Status.NOT_FOUND).build();
-		    
-	  }	
-	
+
 	
 	
 	

@@ -1,7 +1,7 @@
 package uk.ac.abdn.t3.t3v2;
 
 public class Models {
-	public final static UserConnection conn=new UserConnection();
+	
 	public final static String INSTANCE="http://t3.abdn.ac.uk/ontologies/instancedata.owl";
 	public final static String TTT="http://t3.abdn.ac.uk/ontologies/t3.owl";
 	public final static String PROV="http://www.w3.org/ns/prov";

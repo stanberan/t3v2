@@ -2,6 +2,7 @@ package uk.ac.abdn.t3.t3v2.rest;
 
 import java.util.Date;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -71,10 +72,12 @@ return "Done";
 	@GET
 	@Path("/accept/capabilities/{userid}/{devid}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response acceptCap(@PathParam ("userid")String userid,@PathParam("devid")String devid){
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response acceptCap(@PathParam ("userid")String userid,@PathParam("devid")String devid, String json){
 		
+	
+			boolean exist=db.associateDevAndUser(devid,userid,"x12"); //ignore
 		
-	   boolean exist=db.associateDevAndUser(devid,userid );
 	   inferenceService.changeAcceptedCapabilities(userid, devid);
 	     
 	   if(exist){
@@ -104,22 +107,41 @@ ob.put("time", new Date().getTime());
 }
 return Response.noContent().entity(new CustomError("error","No new capabilities detected.").toJson()).build();
 }
+
+
+@GET
+@Path("/exist/device/{userid}/{deviceid}")
+@Produces(MediaType.TEXT_PLAIN)
+public Response exist(@PathParam ("userid")String userid,@PathParam("deviceid")String devid){
+
+	boolean e=db.accepted(devid, userid);
+	JSONObject j=new JSONObject();
+	j.put("exist", e);
+	
+   return Response.noContent().entity(j.toString()).build();
+	
+}
+
 	@GET
 	@Path("/register/device/{userid}/{deviceid}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String devid){
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String devid,String json){
 		
-		
-	   boolean exist=db.associateDevAndUser(devid,userid );
-	
-	     
+		boolean exist=false;
+		JSONObject j=new JSONObject(json);
+		if(j.has("nickname")){	
+	  exist=db.associateDevAndUser(devid,userid,j.getString("nickname"));
+		}
 	   if(exist){
-		   return Response.ok().entity("Associated").build();
+		   j.put("registered", "Device registered as"+j.getString("nickname"));
+		   return Response.ok().entity(j).build();
 	   }
 	   return Response.noContent().entity(new CustomError("registerUser","User not updated").toJson()).build();
 		
 	}
 }
+	
 
 		
 		
