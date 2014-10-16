@@ -100,7 +100,7 @@ ob.put("devid", "simbbox001");
 ob.put("time", new Date().getTime());
 
 	NotificationService.notifyUser("APA91bHSGYQgnQ2fwM0plAkDvHfDvMwWBtrZqiCu9OT3xAVZpDtr7_Ps2fasXE2EnF5kYdZ_CQ2fGh7U1wmhD8M4i4mrM3501wY2p4qyET46ZXfInicXD7mxrU_CQQXsh7dv7uEPFdTEqVeTBUWSM-g-bFFswx5Ljw", ob);
-	return Response.ok().entity(ob).build();
+	return Response.ok().entity(ob.toString()).build();
 }
 return Response.noContent().entity(new CustomError("error","No new capabilities detected.").toJson()).build();
 }

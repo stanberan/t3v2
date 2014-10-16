@@ -114,7 +114,7 @@ System.out.println("New capability detected"+current.toJson());
 		}
 		
 		
-	//	jsondata.put("currentCapabilities", currentCapJson);
+		jsondata.put("currentCapabilities", currentCapJson);
 		
 		if(newCapabilities.size()==0){
 			jsondata.put("different", false);
@@ -130,7 +130,7 @@ System.out.println("New capability detected"+current.toJson());
 		newCapJson.put(new JSONObject(c.toJson()));
 		}
 
-	//	jsondata.put("newCapabilities", newCapJson);
+		jsondata.put("newCapabilities", newCapJson);
 
 		}
 		
