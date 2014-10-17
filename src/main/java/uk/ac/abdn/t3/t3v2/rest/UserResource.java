@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -71,21 +72,20 @@ return "Done";
 	
 	@GET
 	@Path("/accept/capabilities/{userid}/{devid}")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response acceptCap(@PathParam ("userid")String userid,@PathParam("devid")String devid, String json){
+	public Response acceptCap(@PathParam ("userid")String userid,@PathParam("devid")String devid){
 		
 	
-			boolean exist=db.associateDevAndUser(devid,userid,"x12"); //ignore
+		//	boolean exist=db.associateDevAndUser(devid,userid,"x12"); //ignore
 		
 	   inferenceService.changeAcceptedCapabilities(userid, devid);
+	     JSONObject o=new JSONObject();
+	     o.put("accepted","The capabilities were accepted. Thank you.");
 	     
-	   if(exist){
 		   
-		   return Response.ok().entity("Associated").build();
-	   }
-	   return Response.noContent().entity(new CustomError("registerUser","User not updated").toJson()).build();
-		
+		   return Response.accepted().entity(o).build();
+	   
 	}
 @GET
 @Path("/notification/test")
@@ -122,7 +122,7 @@ public Response exist(@PathParam ("userid")String userid,@PathParam("deviceid")S
 	
 }
 
-	@GET
+	@POST
 	@Path("/register/device/{userid}/{deviceid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)

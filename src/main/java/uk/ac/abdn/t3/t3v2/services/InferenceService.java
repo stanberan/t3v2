@@ -84,7 +84,7 @@ public class InferenceService {
 	
 	
 	//infer plus comopare
-	public OntModel getDeviceOntModel(String devid){
+	public synchronized OntModel getDeviceOntModel(String devid){
 	
 		String deviceProvenanceGraph=ModelController.TTT_GRAPH+devid+"/prov";
 		String deviceDescriptionGraph=ModelController.TTT_GRAPH+devid+"/data";
@@ -96,7 +96,7 @@ public class InferenceService {
 		
 	}
 	
-	private OntModel getDeviceOntModel(Model baseModel){
+	private synchronized OntModel getDeviceOntModel(Model baseModel){
 		OntModel TTT=ModelController.getT3Ont();
 		System.out.println("TTT MODEL AFTER BASE MODEL PASSED");
 //		TTT.write(System.out, "TTL");
@@ -478,8 +478,10 @@ ArrayList<Company>companies =new ArrayList<Company>();
 	QueryExecution qExec=QueryExecutionFactory.create(query.asQuery(),instance);	
 		   
 	ResultSet rs = qExec.execSelect() ;
+	System.out.println("PERSONAL DATA SHARING CHECK.....");
 		     try {
 		        while(rs.hasNext()){
+		        	System.out.print("OK");
 		        	PersonalDataSharing pdg=new PersonalDataSharing();
 		        	QuerySolution cap=rs.next();
 		        pdg.setConsumer_uri(cap.get("consumer_uri").asResource().getURI());
