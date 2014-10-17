@@ -137,6 +137,7 @@ JSONArray sorted=new JSONArray();
 JSONArray currentHeaders=new JSONArray();
 	for(JSONObject key: map.keySet()){
 		currentHeaders.put(key);
+		sorted.put(map.get(key));
 	}
 	all.put("sorted", sorted);
 	all.put("currentHeaders", currentHeaders );
