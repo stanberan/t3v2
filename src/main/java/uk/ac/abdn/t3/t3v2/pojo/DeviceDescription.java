@@ -17,9 +17,37 @@ public class DeviceDescription {
 	String logo;
 	String manufacturer;
 	String owner;
+	String manufacturerLogo;
+	String ownerLogo;
+	String man_name;
+	String own_name;
 	String securityDescription;
 	String typeDescription;
 	String deviceDescription;
+	public String getManufacturerLogo() {
+		return manufacturerLogo;
+	}
+	public void setManufacturerLogo(String manufacturerLogo) {
+		this.manufacturerLogo = manufacturerLogo;
+	}
+	public String getOwnerLogo() {
+		return ownerLogo;
+	}
+	public void setOwnerLogo(String ownerLogo) {
+		this.ownerLogo = ownerLogo;
+	}
+	public String getMan_name() {
+		return man_name;
+	}
+	public void setMan_name(String man_name) {
+		this.man_name = man_name;
+	}
+	public String getOwn_name() {
+		return own_name;
+	}
+	public void setOwn_name(String own_name) {
+		this.own_name = own_name;
+	}
 	public String getDev_uri() {
 		return dev_uri;
 	}

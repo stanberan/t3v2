@@ -585,12 +585,16 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		    	 
 		    	 ParameterizedSparqlString query=new ParameterizedSparqlString();
 				 	query.setCommandText( ""
-				 				+ "SELECT ?iotdev ?device_name ?manufacturer ?owner ?securityDescription ?deviceDescription ?logo ?typeDescription "
+				 				+ "SELECT ?iotdev ?device_name ?manufacturer ?man_name ?own_name ?manufacturerLogo ?ownerLogo ?owner ?securityDescription ?deviceDescription ?logo ?typeDescription "
 				 				+ "WHERE {"
 				 				+ "?iotdev a ttt:TelematicsDevice .  "
 				 				+ "?iotdev foaf:name ?device_name . "
 				 		    	+ "?iotdev ttt:manufacturer ?manufacturer. "
+				 		    	+ "?manufacturer foaf:logo ?manufacturerLogo. "
+				 		   	+ "?manufacturer foaf:name ?man_name. "
 				 				+ " ?iotdev ttt:owner ?owner. "
+				 				+ " ?owner foaf:logo ?ownerLogo. "
+				 				+ " ?owner foaf:name ?own_name. "
 				 				+ " ?iotdev ttt:securityDescription ?securityDescription . "
 				 				+ " ?iotdev ttt:deviceDescription ?deviceDescription . "
 				 				+ " ?iotdev ttt:typeDescription ?typeDescription . "
@@ -616,6 +620,10 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		 		       d.setManufacturer(sol.get("manufacturer").asResource().getURI());
 		 		      d.setOwner(sol.get("owner").asResource().getURI());
 		 		      d.setName(sol.get("device_name").toString());
+		 		      d.setMan_name(sol.get("man_name").toString());
+		 		      d.setOwn_name(sol.get("own_name").toString());
+		 		      d.setManufacturerLogo(sol.get("manufacturerLogo").asResource().getURI());
+		 		      d.setOwnerLogo(sol.get("ownerLogo").asResource().getURI());
 		 		      System.out.println(d.toJson());
 		 		      return d;
 		 		        }
