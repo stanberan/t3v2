@@ -29,11 +29,11 @@ public class AnalyseTimer {
 	ArrayList<String> users;
 	long delay = 10*60*1000; // ms
     LoopTask task = new LoopTask();
-    Timer timer = new Timer("TaskName");
+    Timer timer;
     Device d;
     public AnalyseTimer(int minutes){
     	if(minutes!=0 && minutes>0){
-    	
+    		 timer= new Timer("TaskName"+new Date().getTime());
     		delay=minutes*60*1000;
     	}
     }

@@ -340,6 +340,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 					+ "SELECT ?uri ?logo ?name ?tel ?url ?email ?address "
 					+ "WHERE {"
 					+ "?uri a foaf:Organization . "
+					+ "?uri ttt:test ?something . "
 					+ "OPTIONAL{?uri foaf:name ?name .} "
 					+ "	OPTIONAL {?uri ns:hasAddress ?address . }"
 					+ " OPTIONAL {?uri foaf:phone ?tel .}"
@@ -443,7 +444,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 		        pdg.setData_uri(cap.get("data_uri").asResource().getURI());
 		        pdg.setData_desc(cap.get("data_desc").asLiteral().getString());	
 		        pdg.setType(ModelController.TTT_NS+"PersonalDataGeneration");
-		        pdg.setCompany_logo(cap.get("logo").asResource().getURI());
+		        pdg.setCompany_logo("http://t3.abdn.ac.uk/image/simbox.png");
 		        	pdgs.add(pdg);
 		        }
 		        return filterPDG(pdgs); }
@@ -584,7 +585,8 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			
 		}
 		     public DeviceDescription getDeviceGeneralData(OntModel instance){
-		    	 
+		    	 System.out.println("PASSED INSTANCE");
+		    	 instance.write(System.out,"TTL");
 		    	 ParameterizedSparqlString query=new ParameterizedSparqlString();
 				 	query.setCommandText( ""
 				 				+ "SELECT ?iotdev ?device_name ?manufacturer ?man_name ?own_name ?manufacturerLogo ?ownerLogo ?owner ?securityDescription ?deviceDescription ?logo ?typeDescription "

@@ -30,7 +30,8 @@ public class QueryService {
 	}
 	public DeviceDescription getDeviceDescription(String devid){
 		infService=InferenceService.getService();	
-		OntModel mainDeviceModel=infService.getDeviceOntModel(devid);	
+		OntModel mainDeviceModel=infService.getDeviceOntModel(devid);
+	
 		DeviceDescription description=infService.getDeviceGeneralData(mainDeviceModel);
 		
 		return description;
