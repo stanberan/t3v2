@@ -70,8 +70,10 @@ public class AnalyseTimer {
 			ob.put("devid", d.getDevid());
 			ob.put("time", new Date().getTime());
 			
-			NotificationService.notifyUser(gcms.get(j), ob);
-		
+			boolean b=NotificationService.notifyUser(gcms.get(j), ob);
+			if(b){
+				DB.getDB().trackNotify(new Date().getTime(),d.getDevid(),userid);
+			}
 				
 			}
 		}

@@ -36,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import uk.ac.abdn.t3.t3v2.CapabilityMatchingService;
+import uk.ac.abdn.t3.t3v2.DB;
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.PolicyData;
 import uk.ac.abdn.t3.t3v2.RDFData;
@@ -107,7 +108,9 @@ try{
 catch(Exception e){
 	return Response.notModified().entity(new CustomError("uploadprov","Exception whenuploading provenance"+e.getMessage())).build();
 }
-        return Response.accepted().entity("Accepted").build();
+//track when uploaded
+DB.getDB().uploadedProv(device_id);       
+return Response.accepted().entity("Accepted").build();
         
         
     }

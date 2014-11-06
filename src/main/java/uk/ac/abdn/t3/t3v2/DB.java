@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -145,6 +147,47 @@ public boolean accepted(String devid,String userid){
 		}
 }
 	
+public boolean acceptedFirst(String device, String iotDevice,String acceptedGraph) throws Exception{
+	Timestamp ts=new Timestamp(new Date().getTime());
+	
+	if(conn.isClosed()){
+		conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
+	}
+	PreparedStatement pStatement=conn.prepareStatement("INSERT into trackacc values(?,?,?,?)");
+	pStatement.setTimestamp(1,ts);
+	pStatement.setString(2, device);
+	pStatement.setString(3, iotDevice);
+	pStatement.setString(4, acceptedGraph);
+	int i= pStatement.executeUpdate();
+	if(i>0){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+public boolean uploadedProv(String device) {
+	Timestamp ts=new Timestamp(new Date().getTime());
+	try{
+	if(conn.isClosed()){
+		conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
+	}
+	PreparedStatement pStatement=conn.prepareStatement("INSERT into trackupload values(?,?)");
+	pStatement.setTimestamp(1,ts);
+	pStatement.setString(2, device);
+	int i= pStatement.executeUpdate();
+	if(i>0){
+		return true;
+	}
+	else{
+		return false;
+	}
+	}
+	catch(Exception e){
+		e.printStackTrace();
+		return false;
+	}
+}
 
 
 public boolean associateDevAndUser(String devid,String userid,String nickname){
@@ -159,7 +202,7 @@ public boolean associateDevAndUser(String devid,String userid,String nickname){
 		pStatement.setString(2, userid);
 		pStatement.setString(3, nickname);
 		
-	int i=pStatement.executeUpdate();
+	pStatement.executeUpdate();
 	System.out.println("IoT Device:"+devid +"was associated with user with new cap"+userid);
 	return true;  //return true even if no association was done. 
 		}
@@ -172,6 +215,51 @@ public boolean associateDevAndUser(String devid,String userid,String nickname){
 	}
 	System.out.println("No association.");
 	return false;
+}
+
+public boolean trackNotify(long time, String iotDevice,String userid){
+	Timestamp ts=new Timestamp(time);
+	try{
+	if(conn.isClosed()){
+		conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
+	}
+	PreparedStatement pStatement=conn.prepareStatement("INSERT into tracknotification values(?,?,?)");
+	pStatement.setTimestamp(1,ts);
+	pStatement.setString(2, iotDevice);
+	pStatement.setString(3, userid);
+	int i= pStatement.executeUpdate();
+	if(i>0){
+		return true;
+	}
+	else{
+		return false;
+	}
+	}catch(Exception e){
+		e.printStackTrace();return false;
+	}
+}
+public boolean trackInference(long mstaken, String iotDevice,long triplescount,long inferredcount){
+	Timestamp ts=new Timestamp(new Date().getTime());
+	try{
+	if(conn.isClosed()){
+		conn=DriverManager.getConnection(Configuration.url+Configuration.dbName,Configuration.userName,Configuration.password);
+	}
+	PreparedStatement pStatement=conn.prepareStatement("INSERT into trackinference values(?,?,?,?,?)");
+	pStatement.setTimestamp(1,ts);
+	pStatement.setString(2, iotDevice);
+	pStatement.setLong(3, mstaken);
+	pStatement.setLong(4, triplescount);
+	pStatement.setLong(5, inferredcount);
+	int i= pStatement.executeUpdate();
+	if(i>0){
+		return true;
+	}
+	else{
+		return false;
+	}
+	}catch(Exception e){
+		e.printStackTrace();return false;
+	}
 }
 /*	
 public boolean registerDevice(Device d){

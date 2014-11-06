@@ -31,10 +31,10 @@ public class CapabilityMatchingService {
 	public synchronized static JSONObject capabilityMatch(String devid, String uid){
 
 		OntModel mainModel=inferenceService.getDeviceOntModel(devid);
-		
+		Model baseModel=inferenceService.getBaseDeviceModel(devid);
 	mainModel.write(System.out,"TTL");
 		Model currentCap=ModelFactory.createDefaultModel();	
-		inferenceService.inferCapabilities(mainModel, currentCap);
+		inferenceService.inferCapabilities(mainModel,baseModel, currentCap,devid);
 
 		
 		

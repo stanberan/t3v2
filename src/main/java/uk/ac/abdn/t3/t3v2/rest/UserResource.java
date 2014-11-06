@@ -79,7 +79,12 @@ return "Done";
 	
 		//	boolean exist=db.associateDevAndUser(devid,userid,"x12"); //ignore
 		
-	   inferenceService.changeAcceptedCapabilities(userid, devid);
+	   try {
+		inferenceService.changeAcceptedCapabilities(userid, devid);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	     JSONObject o=new JSONObject();
 	     o.put("accepted","The capabilities were accepted. Thank you.");
 	     
@@ -122,17 +127,15 @@ public Response exist(@PathParam ("userid")String userid,@PathParam("deviceid")S
 	
 }
 
-	@POST
+	@GET
 	@Path("/register/device/{userid}/{deviceid}")
-	@Produces(MediaType.TEXT_PLAIN)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String devid,String json){
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response registerDev(@PathParam ("userid")String userid,@PathParam("deviceid")String devid){
 		
 		boolean exist=false;
-		JSONObject j=new JSONObject(json);
-		if(j.has("nickname")){	
-	  exist=db.associateDevAndUser(devid,userid,j.getString("nickname"));
-		}
+		
+		JSONObject j=new JSONObject();
+	  exist=db.associateDevAndUser(devid,userid,"My Blackbox");
 	   if(exist){
 		   j.put("registered", "Device registered as"+j.getString("nickname"));
 		   return Response.ok().entity(j).build();

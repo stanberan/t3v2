@@ -1,6 +1,7 @@
 package uk.ac.abdn.t3.t3v2.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.topbraid.spin.inference.SPINInferences;
 import org.topbraid.spin.system.SPINModuleRegistry;
@@ -21,6 +22,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import com.hp.hpl.jena.tdb.TDB;
 
+import uk.ac.abdn.t3.t3v2.DB;
 import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.Repository;
 import uk.ac.abdn.t3.t3v2.capabilities.BillingCap;
@@ -86,10 +88,8 @@ public class InferenceService {
 	//infer plus comopare
 	public synchronized OntModel getDeviceOntModel(String devid){
 	
-		String deviceProvenanceGraph=ModelController.TTT_GRAPH+devid+"/prov";
-		String deviceDescriptionGraph=ModelController.TTT_GRAPH+devid+"/data";
 		
-		Model baseModel=getBaseDeviceModel(deviceProvenanceGraph,deviceDescriptionGraph);
+		Model baseModel=getBaseDeviceModel(devid);
 		OntModel deviceOntModel=getDeviceOntModel(baseModel);
 		return deviceOntModel;
 		
@@ -100,11 +100,12 @@ public class InferenceService {
 		OntModel TTT=ModelController.getT3Ont();
 		System.out.println("TTT MODEL AFTER BASE MODEL PASSED");
 //		TTT.write(System.out, "TTL");
+		System.out.println("BASE MODEL SIZE:"+baseModel.size());
 		OntModel ontDeviceModel=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, baseModel);
-		System.out.println("BEFORE");
+		System.out.println("BEFORE:"+ontDeviceModel.size());
 		//ontDeviceModel.write(System.out, "TTL");
 		ontDeviceModel.addSubModel(TTT);
-		System.out.println("AFTER");
+		System.out.println("AFTER TTT added:"+ontDeviceModel.size());
 		//ontDeviceModel.write(System.out, "TTL");
 	
 		return ontDeviceModel;
@@ -125,6 +126,7 @@ public class InferenceService {
 		return null;
 		
 	}
+	/*
 	public void inferCapabilities(OntModel deviceOntModel, Model inferedCapabilities){
 		System.out.println("Entered Inference:"+deviceOntModel.size());
 		SPINModuleRegistry.get().init();
@@ -137,7 +139,28 @@ public class InferenceService {
 	
 		
 	}
-	public void changeAcceptedCapabilities(String uid,String devid){
+	*/
+	public void inferCapabilities(OntModel rules,Model base, Model inferedCapabilities,String devid){
+		System.out.println("Entered Inference:"+base.size());
+		System.out.println("Initializing Registry..."+new Date().toString());
+		SPINModuleRegistry.get().init();
+		System.out.println("Registering rules..."+new Date().toString());
+		SPINModuleRegistry.get().registerAll(rules, null);
+		System.out.println("Running inferences..."+new Date().toString());
+		long start=System.currentTimeMillis();
+		SPINInferences.run(rules, inferedCapabilities, null, null,true, null);
+		long finish=System.currentTimeMillis();
+		
+		System.out.println("Done Running Inference..."+new Date().toString());
+		System.out.println("Exited Inference");
+		DB.getDB().trackInference(finish-start,devid,rules.size(),inferedCapabilities.size());
+		
+	//TDB.addToGraph(inference, Models.graphNS+"usersimbbox001/"+type);
+	
+		
+	}
+	public void changeAcceptedCapabilities(String uid,String devid) throws Exception{
+		
 		String newGraph=ModelController.TTT_GRAPH+devid+uid+"/temp";
 		String accGraph=ModelController.TTT_GRAPH+devid+uid+"/accepted";
 		System.out.println("Changing accepted removing"+accGraph);
@@ -147,9 +170,13 @@ public class InferenceService {
 	//	m.write(System.out,"TTL");
 		System.out.println("Accepted capabilities add...XXXXXXXXXXXXXXXFrommodel"+accGraph);
 		TDB.addToGraph(m, accGraph);
-		Model c=TDB.getIndependentModel(accGraph);
+	//	Model c=TDB.getIndependentModel(accGraph);
 	//	c.write(System.out,"TTL");
 		System.out.println("Accepted Capabilities removed and updated!"+accGraph);
+		
+		
+		//SAVE time of accepted capabilities
+		DB.getDB().acceptedFirst(uid, devid, accGraph);
 		
 	}
 	public void changeTemporaryCap(Model m, String temp){
@@ -692,14 +719,15 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			
 		}
 	
-	public Model getBaseDeviceModel(String deviceProvGraph, String deviceDescriptionGraph ){
-		
-		Model prov=TDB.getIndependentModel(deviceProvGraph);
+	public Model getBaseDeviceModel(String devid){
+		String deviceProvenanceGraph=ModelController.TTT_GRAPH+devid+"/prov";
+		String deviceDescriptionGraph=ModelController.TTT_GRAPH+devid+"/data";
+		Model prov=TDB.getIndependentModel(deviceProvenanceGraph);
 		Model data=TDB.getIndependentModel(deviceDescriptionGraph);
 		Model baseDeviceModel=ModelFactory.createDefaultModel();
 	if(prov!=null){
 	baseDeviceModel.add(prov);
-	System.out.println("Prov from:"+deviceProvGraph +" added.");
+	System.out.println("Prov from:"+deviceProvenanceGraph +" added.");
 	}
 	if(data!=null){
 		baseDeviceModel.add(data);
