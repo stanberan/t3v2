@@ -60,6 +60,8 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateRequest;
 
@@ -118,7 +120,12 @@ return Response.accepted().entity("Accepted").build();
 @POST
 @Path("/check/policy/{deviceid}")
     public Response checkPolicy(@PathParam("deviceid") String device_id,String body ) {
-      System.out.println(body);
+	Model m=TDB.getIndependentModel(ModelController.TTT_GRAPH+device_id+"/data");
+	Property dec=ResourceFactory.createProperty(ModelController.TTT_NS+"declined");
+	
+	if(m.contains(null,dec,"PDS")){
+	
+	System.out.println(body);
 try{
 	ObjectMapper mapper=new ObjectMapper();
     	mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -130,18 +137,23 @@ try{
    temp.read(stream,null,"TTL");
    System.out.println("From model object:");
    //temp.write(System.out, "TTL");
-  OntModel m= InferenceService.getService().getDeviceOntModel(device_id);
-  m.add(temp);
+  OntModel model= InferenceService.getService().getDeviceOntModel(device_id);
+  model.add(temp);
   
   //check against policy
- boolean data= PolicyService.checkPolicy(device_id, m);
-        
+ boolean isViolated= PolicyService.checkPolicy(device_id, model);
+ JSONObject j=new JSONObject();
+ j.put("isViolated", isViolated);
+ return Response.notModified().entity(j.toString()).build();
    		
 }
 catch(Exception e){
 	return Response.notModified().entity(new CustomError("uploadprov","Exception when checking policy"+e.getMessage())).build();
 }
-        return Response.accepted().entity("Accepted").build();
+	}
+	 JSONObject j=new JSONObject();
+	 j.put("isViolated", false);
+	 return Response.notModified().entity(j.toString()).build();
         
         
     }

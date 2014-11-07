@@ -115,7 +115,9 @@ return "Done";
 		Property t3declined=m.createProperty(ModelController.TTT_NS+"declined");
 		TDB.removeNamedGraph(declinedGraph);
 		TDB.addToGraph(m, declinedGraph);
-		Resource pds=ResourceFactory.createResource(ModelController.TTT_NS+"PersonalDataSharing");
+		
+		 TDB.addToGraph(m, ModelController.TTT_NS+devid+userid+"/accepted");	//small hack for stopping  notifications when declined	
+		 Resource pds=ResourceFactory.createResource(ModelController.TTT_NS+"PersonalDataSharing");
 		//ResIterator it=m.listSubjectsWithProperty(t3declined);
 		//if(it.hasNext()){
 		if(m.contains(null,null,pds)){
