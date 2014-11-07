@@ -124,7 +124,7 @@ return Response.accepted().entity("Accepted").build();
 	Property dec=ResourceFactory.createProperty(ModelController.TTT_NS+"declined");
 	
 	if(m.contains(null,dec,"PDS")){
-	
+	System.out.println("PDS found in Data graph");
 	System.out.println(body);
 try{
 	ObjectMapper mapper=new ObjectMapper();
@@ -148,6 +148,7 @@ try{
    		
 }
 catch(Exception e){
+	e.printStackTrace();
 	return Response.notModified().entity(new CustomError("uploadprov","Exception when checking policy"+e.getMessage())).build();
 }
 	}
