@@ -156,10 +156,14 @@ JSONArray currentHeaders=new JSONArray();
 	
 	//compareMethod
 		
-	private static boolean sameDeclinedAsCurrent(ArrayList<Capability>currentCap,ArrayList<Capability> acceptedCap){		
+	private static boolean sameDeclinedAsCurrent(ArrayList<Capability>currentCap,ArrayList<Capability> decCap){		
+		if(decCap.size()==0 && currentCap.size()>0){
+			return false;
+		}
+		
 		for (Capability current: currentCap){
 		JSONObject o=new JSONObject(current.toJson());
-			if(!acceptedCap.contains(current)){
+			if(!decCap.contains(current)){
 				o.put("new", true);
 			return false;
 			}

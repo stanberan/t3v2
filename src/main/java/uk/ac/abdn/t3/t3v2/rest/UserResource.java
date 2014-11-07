@@ -122,7 +122,7 @@ return "Done";
 			System.out.println(devid+" graph contains PDS...inserting decline statement for the device");
 			Resource dev=ResourceFactory.createResource(ModelController.TTT_GRAPH+devid+"/"+devid);			
 			Model toAdd=ModelFactory.createDefaultModel().add(dev, t3declined, pds);		
-			TDB.addToGraph(toAdd, Models.graphNS+devid+"/prov");
+			TDB.addToGraph(toAdd, Models.graphNS+devid+"/data");
 				
 		}
 		   JSONObject o=new JSONObject();
