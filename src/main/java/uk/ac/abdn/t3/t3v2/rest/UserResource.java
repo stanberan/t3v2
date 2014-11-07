@@ -13,9 +13,18 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+
 import uk.ac.abdn.t3.t3v2.CapabilityMatchingService;
 import uk.ac.abdn.t3.t3v2.DB;
+import uk.ac.abdn.t3.t3v2.Models;
 import uk.ac.abdn.t3.t3v2.Repository;
+import uk.ac.abdn.t3.t3v2.models.ModelController;
 import uk.ac.abdn.t3.t3v2.pojo.CustomError;
 import uk.ac.abdn.t3.t3v2.pojo.Device;
 import uk.ac.abdn.t3.t3v2.pojo.User;
@@ -92,6 +101,42 @@ return "Done";
 		   return Response.accepted().entity(o).build();
 	   
 	}
+	
+	@GET
+	@Path("/decline/capabilities/{userid}/{devid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response declineCap(@PathParam ("userid")String userid,@PathParam("devid")String devid){
+		//get declined capabilities graph and check if they contain Personal Data Sharing
+		String decGraph=ModelController.TTT_GRAPH+devid+userid+"/temp";
+		Model m=TDB.getIndependentModel(decGraph);
+		String declinedGraph=ModelController.TTT_GRAPH+devid+userid+"/declined";
+		
+		Property t3declined=m.createProperty(ModelController.TTT_NS+"declined");
+		TDB.removeNamedGraph(declinedGraph);
+		TDB.addToGraph(m, declinedGraph);
+		Resource pds=ResourceFactory.createResource(ModelController.TTT_NS+"PersonalDataSharing");
+		//ResIterator it=m.listSubjectsWithProperty(t3declined);
+		//if(it.hasNext()){
+		if(m.contains(null,null,pds)){
+			System.out.println(devid+" graph contains PDS...inserting decline statement for the device");
+			Resource dev=ResourceFactory.createResource(ModelController.TTT_GRAPH+devid+"/"+devid);			
+			Model toAdd=ModelFactory.createDefaultModel().add(dev, t3declined, pds);		
+			TDB.addToGraph(toAdd, Models.graphNS+devid+"/prov");
+				
+		}
+		   JSONObject o=new JSONObject();
+		     o.put("declined","The capabilities were declined. Thank you.");
+   
+			   return Response.accepted().entity(o).build();
+			
+		}
+		
+		
+		
+	
+	
+	
 @GET
 @Path("/notification/test")
 @Produces (MediaType.APPLICATION_JSON)

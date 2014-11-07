@@ -126,6 +126,18 @@ public class InferenceService {
 		return null;
 		
 	}
+	public Model getDeclinedCapabilities(String uid,String devid){
+		String acceptedGraph=ModelController.TTT_GRAPH+devid+uid+"/declined";
+		Model m=TDB.getIndependentModel(acceptedGraph);
+		System.out.print("Retrieving Declined cap from Graph "+acceptedGraph);
+		if(m!=null){
+			System.out.print("Found declined returning model "+acceptedGraph);
+		return m;
+		}
+		System.out.print("Accepted not found creating new model "+acceptedGraph);
+		return null;
+		
+	}
 	/*
 	public void inferCapabilities(OntModel deviceOntModel, Model inferedCapabilities){
 		System.out.println("Entered Inference:"+deviceOntModel.size());

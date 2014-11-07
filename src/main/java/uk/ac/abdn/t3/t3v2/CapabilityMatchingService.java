@@ -48,6 +48,8 @@ public class CapabilityMatchingService {
 		inferenceService.changeTemporaryCap(currentCap, ModelController.TTT_GRAPH+devid+uid+"/temp");
 		//get accepted capabilities of user for the specific iot device.
 		Model acceptedCap=inferenceService.getAcceptedCapabilities(uid,devid);
+		Model declinedCap=inferenceService.getDeclinedCapabilities(uid,devid);
+		
 		   System.out.println("XXXXXXXXXXXXXXXXACCEPTEDXXXXXXXXXXXXXX");
 			if(acceptedCap!=null){
 		   acceptedCap.write(System.out,"TTL");
@@ -61,6 +63,7 @@ public class CapabilityMatchingService {
 		//for interface
 	//CHANGE old
 			ArrayList<Capability>acceptedCapabilityArray=queryService.getCapabilitiesArray(mainModel,acceptedCap);
+			ArrayList<Capability>declinedCapabilityArray=queryService.getCapabilitiesArray(mainModel,declinedCap);
 			
 	//HEADERS
 			ArrayList<Capability>currentHeaders=queryService.getHeaders(currentCapabilitiesArray);
@@ -84,11 +87,12 @@ public class CapabilityMatchingService {
 			}
 			
 			JSONObject j= getNewCapabilities(currentCapabilitiesArray,acceptedCapabilityArray);
-		
+			boolean same= sameDeclinedAsCurrent(currentCapabilitiesArray,declinedCapabilityArray);
 			j.put("acceptedHeaders", a);
+			j.put("same", same);
 			if(h.length()!=0){
 				
-			//sorting fix hashmap android would give inapropraite assigning of jsonarrays to its headers
+			//sorting fix hashmap android would give inapropraite assigning of jsonarrays to its headers -FIXED
 			
 			JSONObject sorted=mapCap(h,j.getJSONArray("currentCapabilities"));
 			System.out.println(sorted.toString(10));
@@ -152,7 +156,20 @@ JSONArray currentHeaders=new JSONArray();
 	
 	//compareMethod
 		
+	private static boolean sameDeclinedAsCurrent(ArrayList<Capability>currentCap,ArrayList<Capability> acceptedCap){		
+		for (Capability current: currentCap){
+		JSONObject o=new JSONObject(current.toJson());
+			if(!acceptedCap.contains(current)){
+				o.put("new", true);
+			return false;
+			}
+		}
 		
+		
+		return true;
+		
+		
+		}
 
 	
 	private static JSONObject getNewCapabilities(ArrayList<Capability>currentCap,ArrayList<Capability> acceptedCap){

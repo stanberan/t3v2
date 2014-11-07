@@ -62,7 +62,7 @@ public class AnalyseTimer {
 				String userid=users.get(j);
 				//check
 		JSONObject jsondata=CapabilityMatchingService.capabilityMatch(d.getDevid(), userid);
-			if(jsondata.getBoolean("different")){
+			if(jsondata.getBoolean("different") || !jsondata.getBoolean("same")){    //different for accepted same for declined
 			String message="Some capabilities for the "+d.getDevid()+"has changed.\nClick on this notification to retrieve them.";			
 	        JSONObject ob=new JSONObject();
 	        ob.put("headers",jsondata.getJSONArray("currentHeaders"));
