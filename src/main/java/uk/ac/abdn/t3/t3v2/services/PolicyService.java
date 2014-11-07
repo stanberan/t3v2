@@ -26,6 +26,7 @@ public class PolicyService {
 	
 	private static boolean inferProhibitionsObligations(OntModel newProvGraph){
 		Model inferredTriples=ModelFactory.createDefaultModel();
+		SPINModuleRegistry.get().reset();
 			System.out.println("Entered Inference:"+newProvGraph.size());
 			System.out.println("Initializing Registry..."+new Date().toString());
 			SPINModuleRegistry.get().init();
@@ -37,8 +38,10 @@ public class PolicyService {
 			long finish=System.currentTimeMillis();
 			System.out.println("POLICY CHECK SIZE"+inferredTriples.size());
 			System.out.println("Done Running Inference..."+new Date().toString());
+			
 			System.out.println("Exited Inference");
 			if(inferredTriples.size()>0){
+				inferredTriples.write(System.out,"TTL");
 				return true;
 			}
 			return false;
