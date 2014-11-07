@@ -61,6 +61,7 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateRequest;
@@ -123,8 +124,8 @@ return Response.accepted().entity("Accepted").build();
     public Response checkPolicy(@PathParam("deviceid") String device_id,String body ) {
 	Model m=TDB.getIndependentModel(ModelController.TTT_GRAPH+device_id+"/data");
 	Property dec=ResourceFactory.createProperty(ModelController.TTT_NS+"declined");
-	
-	if(m.contains(null,dec,"PDS")){
+	Resource pds=ResourceFactory.createResource(ModelController.TTT_NS+"PersonalDataSharing");
+	if(m.contains(null,dec,pds)){
 	System.out.println("PDS found in Data graph");
 	System.out.println(body);
 try{
