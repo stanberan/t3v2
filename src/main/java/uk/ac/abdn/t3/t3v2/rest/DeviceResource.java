@@ -124,7 +124,7 @@ return Response.accepted().entity("Accepted").build();
 	Model m=TDB.getIndependentModel(ModelController.TTT_GRAPH+device_id+"/data");
 	Property dec=ResourceFactory.createProperty(ModelController.TTT_NS+"declined");
 	
-	if(m.contains(dec,null)){
+	if(m.contains(null,dec,"PDS")){
 	System.out.println("PDS found in Data graph");
 	System.out.println(body);
 try{
@@ -145,17 +145,18 @@ try{
  boolean isViolated= PolicyService.checkPolicy(device_id, model);
  JSONObject j=new JSONObject();
  j.put("isViolated", isViolated);
- return Response.notModified().entity(j.toString()).build();
+ return Response.accepted().entity(j.toString()).build();
    		
 }
 catch(Exception e){
 	e.printStackTrace();
-	return Response.notModified().entity(new CustomError("uploadprov","Exception when checking policy"+e.getMessage())).build();
+	return Response.serverError().entity(new CustomError("uploadprov","Exception when checking policy"+e.getMessage())).build();
 }
 	}
+	System.out.println("HMM cannot find this PDS maaan.");
 	 JSONObject j=new JSONObject();
 	 j.put("isViolated", false);
-	 return Response.notModified().entity(j.toString()).build();
+	 return Response.noContent().entity(j.toString()).build();
         
         
     }
