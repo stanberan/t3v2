@@ -119,11 +119,12 @@ return Response.accepted().entity("Accepted").build();
 
 @POST
 @Path("/check/policy/{deviceid}")
+@Produces(MediaType.APPLICATION_JSON)
     public Response checkPolicy(@PathParam("deviceid") String device_id,String body ) {
 	Model m=TDB.getIndependentModel(ModelController.TTT_GRAPH+device_id+"/data");
 	Property dec=ResourceFactory.createProperty(ModelController.TTT_NS+"declined");
 	
-	if(m.contains(null,dec,"PDS")){
+	if(m.contains(dec,null)){
 	System.out.println("PDS found in Data graph");
 	System.out.println(body);
 try{
