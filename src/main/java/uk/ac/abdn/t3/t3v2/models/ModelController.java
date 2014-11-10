@@ -66,13 +66,26 @@ public static Model test(){
 	return m;
 }
 
+
+	 public static Model getRules(){
+		Model m= ModelFactory.createDefaultModel();
+		 m.read("http://t3.abdn.ac.uk/ontologies/t3rules.ttl",null,"TTL");
+		 return m;
+	 }
+	 public static Model getPolicy(){
+		 Model m=ModelFactory.createDefaultModel();
+		 m.read("http://t3.abdn.ac.uk/ontologies/t3policy.rdf",null,"RDF/XML");
+		 return m;
+	 }
+	 
 	public static OntModel getT3Ont(){
 		System.getProperties().put("proxySet","true");
 		   System.getProperties().put("proxyHost","proxy.abdn.ac.uk");
 		   System.getProperties().put("proxyPort",8080);
 		    if(TTT_M==null){
 		    	TTT_M=ModelFactory.createOntologyModel();
-		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2.rdf",null,"RDF/XML"); 
+		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2-plain.rdf",null,"RDF/XML"); 
+		    	TTT_M.read(PROV);
 		    }
 		    System.out.println("XXXXXXXXXXXXT3V2.RDF Ont MODELXXXXXXXXXXXXXXX");
 //	TTT_M.write(System.out,"TTL");
