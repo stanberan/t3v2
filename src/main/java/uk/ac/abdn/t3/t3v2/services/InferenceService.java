@@ -97,14 +97,14 @@ public class InferenceService {
 	}
 	
 	private synchronized OntModel getDeviceOntModel(Model baseModel){
-		OntModel TTT=ModelController.getT3Ont();
+		Model TTT=ModelController.getT3Ont();
 		System.out.println("TTT MODEL AFTER BASE MODEL PASSED");
 //		TTT.write(System.out, "TTL");
 		System.out.println("BASE MODEL SIZE:"+baseModel.size());
 		OntModel ontDeviceModel=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, baseModel);
 		System.out.println("BEFORE:"+ontDeviceModel.size());
 		//ontDeviceModel.write(System.out, "TTL");
-		ontDeviceModel.addSubModel(TTT);
+		ontDeviceModel.addSubModel(TTT,false);
 		System.out.println("AFTER TTT added:"+ontDeviceModel.size());
 		//ontDeviceModel.write(System.out, "TTL");
 	
@@ -155,7 +155,7 @@ public class InferenceService {
 	public void inferCapabilities(OntModel rules, Model inferedCapabilities,String devid){
 	//include rules when inferring
 		Model capabilityRules=ModelController.getRules();
-    rules.addSubModel(capabilityRules,true); //add inferencing engine true
+    rules.addSubModel(capabilityRules);
  
 		//System.out.println("Entered Inference:"+base.size());
 		System.out.println("Initializing Registry..."+new Date().toString());
@@ -166,10 +166,11 @@ public class InferenceService {
 		long start=System.currentTimeMillis();
 		SPINInferences.run(rules, inferedCapabilities, null, null,true, null);
 		long finish=System.currentTimeMillis();
+		System.out.println("Done Running Inference..."+new Date().toString());
 		//remove rules
 		rules.remove(capabilityRules);
 		
-		System.out.println("Done Running Inference..."+new Date().toString());
+		
 		System.out.println("Exited Inference");
 		DB.getDB().trackInference(finish-start,devid,rules.size(),inferedCapabilities.size());
 		
@@ -726,7 +727,7 @@ ArrayList<Company>companies =new ArrayList<Company>();
 			 		       pdg.setCompany_logo(cap.get("consumer_logo").asResource().getURI());
 			 		        	pdgs.add(pdg);
 			 		        }
-			 		        return pdgs; }
+			 		        return filterPDU(pdgs); }
 			 		        catch(Exception e){
 			 		        	e.printStackTrace();
 			 		        	return null;

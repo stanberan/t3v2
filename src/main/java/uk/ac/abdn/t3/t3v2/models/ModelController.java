@@ -41,7 +41,7 @@ static{
 	public final static String PROV_NS="http://www.w3.org/ns/prov#";
 	public final static String TTT_GRAPH="http://t3.abdn.ac.uk/t3v2/1/device/";
 	
-	public static OntModel TTT_M=null;
+	public static Model TTT_M=null;
 	static Model PROV_M;
 	static Model IOTA_M;
 	static Model RULES_M;
@@ -83,17 +83,17 @@ public static Model test(){
 		 return POLICY_M;
 	 }
 	 
-	public static OntModel getT3Ont(){
+	public static Model getT3Ont(){
 		System.getProperties().put("proxySet","true");
 		   System.getProperties().put("proxyHost","proxy.abdn.ac.uk");
 		   System.getProperties().put("proxyPort",8080);
 		    if(TTT_M==null){
-		    	TTT_M=ModelFactory.createOntologyModel();
+		    	TTT_M=ModelFactory.createDefaultModel();
 		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2-plain.rdf",null,"RDF/XML"); 
-		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/iota.ttl",null,"TTL");
-		    	TTT_M.read("http://spinrdf.org/sp",null,"RDF/XML");
-		    	TTT_M.write(System.out,"TTL");
-		    	TTT_M.read(PROV);
+		    	//TTT_M.read("http://t3.abdn.ac.uk/ontologies/iota.ttl",null,"TTL");
+		    	//TTT_M.read("http://spinrdf.org/sp",null,"RDF/XML");
+		    //	TTT_M.write(System.out,"TTL");
+		    	//TTT_M.read(PROV);
 		    }
 		    System.out.println("XXXXXXXXXXXXT3V2.RDF Ont MODELXXXXXXXXXXXXXXX");
 //	TTT_M.write(System.out,"TTL");
