@@ -45,9 +45,10 @@ static{
 	static Model PROV_M;
 	static Model IOTA_M;
 	static Model RULES_M;
+	static Model POLICY_M;
 	
 	
-	public static Model ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
+//	public static Model ALL_OM=ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 static Repository TDB;//=Repository.getSingleton();
 	
 	//OntModel provenanceModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, "http://www.w3.org/ns/prov");
@@ -68,14 +69,18 @@ public static Model test(){
 
 
 	 public static Model getRules(){
-		Model m= ModelFactory.createDefaultModel();
-		 m.read("http://t3.abdn.ac.uk/ontologies/t3rules.ttl",null,"TTL");
-		 return m;
+		 if(RULES_M==null){
+		RULES_M= ModelFactory.createDefaultModel();
+		 RULES_M.read("http://t3.abdn.ac.uk/ontologies/t3rules.ttl",null,"TTL");
+		 }
+		 return RULES_M;
 	 }
 	 public static Model getPolicy(){
-		 Model m=ModelFactory.createDefaultModel();
-		 m.read("http://t3.abdn.ac.uk/ontologies/t3policy.rdf",null,"RDF/XML");
-		 return m;
+		 if(POLICY_M==null){
+		 POLICY_M=ModelFactory.createDefaultModel();
+		 POLICY_M.read("http://t3.abdn.ac.uk/ontologies/t3pdspolrule.ttl",null,"TTL");
+		 }
+		 return POLICY_M;
 	 }
 	 
 	public static OntModel getT3Ont(){
@@ -85,6 +90,9 @@ public static Model test(){
 		    if(TTT_M==null){
 		    	TTT_M=ModelFactory.createOntologyModel();
 		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/t3v2-plain.rdf",null,"RDF/XML"); 
+		    	TTT_M.read("http://t3.abdn.ac.uk/ontologies/iota.ttl",null,"TTL");
+		    	TTT_M.read("http://spinrdf.org/sp",null,"RDF/XML");
+		    	TTT_M.write(System.out,"TTL");
 		    	TTT_M.read(PROV);
 		    }
 		    System.out.println("XXXXXXXXXXXXT3V2.RDF Ont MODELXXXXXXXXXXXXXXX");

@@ -34,7 +34,7 @@ public class CapabilityMatchingService {
 		Model baseModel=inferenceService.getBaseDeviceModel(devid);
 	mainModel.write(System.out,"TTL");
 		Model currentCap=ModelFactory.createDefaultModel();	
-		inferenceService.inferCapabilities(mainModel,baseModel, currentCap,devid);
+		inferenceService.inferCapabilities(mainModel, currentCap,devid);
 
 		
 		

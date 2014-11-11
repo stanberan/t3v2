@@ -152,17 +152,22 @@ public class InferenceService {
 		
 	}
 	*/
-	public void inferCapabilities(OntModel rules,Model base, Model inferedCapabilities,String devid){
-	Model caprules=ModelController.getRules();
-		System.out.println("Entered Inference:"+base.size());
+	public void inferCapabilities(OntModel rules, Model inferedCapabilities,String devid){
+	//include rules when inferring
+		Model capabilityRules=ModelController.getRules();
+    rules.addSubModel(capabilityRules,true); //add inferencing engine true
+ 
+		//System.out.println("Entered Inference:"+base.size());
 		System.out.println("Initializing Registry..."+new Date().toString());
 		SPINModuleRegistry.get().init();
 		System.out.println("Registering rules..."+new Date().toString());
-		SPINModuleRegistry.get().registerAll(caprules, null);
+		SPINModuleRegistry.get().registerAll(rules, null);
 		System.out.println("Running inferences..."+new Date().toString());
 		long start=System.currentTimeMillis();
 		SPINInferences.run(rules, inferedCapabilities, null, null,true, null);
 		long finish=System.currentTimeMillis();
+		//remove rules
+		rules.remove(capabilityRules);
 		
 		System.out.println("Done Running Inference..."+new Date().toString());
 		System.out.println("Exited Inference");

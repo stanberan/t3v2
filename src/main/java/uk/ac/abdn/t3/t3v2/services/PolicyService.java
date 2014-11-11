@@ -6,6 +6,7 @@ import org.topbraid.spin.inference.SPINInferences;
 import org.topbraid.spin.system.SPINModuleRegistry;
 
 import uk.ac.abdn.t3.t3v2.DB;
+import uk.ac.abdn.t3.t3v2.models.ModelController;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -26,15 +27,18 @@ public class PolicyService {
 	
 	private static boolean inferProhibitionsObligations(OntModel newProvGraph){
 		Model inferredTriples=ModelFactory.createDefaultModel();
-		SPINModuleRegistry.get().reset();
+	Model policies=ModelController.getPolicy();
+		newProvGraph.addSubModel(policies);
 			System.out.println("Entered Inference:"+newProvGraph.size());
 			System.out.println("Initializing Registry..."+new Date().toString());
 			SPINModuleRegistry.get().init();
 			System.out.println("Registering rules..."+new Date().toString());
-			SPINModuleRegistry.get().registerAll(getPolicies(), null);
+			SPINModuleRegistry.get().registerAll(newProvGraph, null);
 			System.out.println("Running inferences..."+new Date().toString());
 			long start=System.currentTimeMillis();
 			SPINInferences.run(newProvGraph, inferredTriples, null, null,true, null);
+			//remove policy
+			newProvGraph.remove(policies);
 			long finish=System.currentTimeMillis();
 			System.out.println("POLICY CHECK SIZE"+inferredTriples.size());
 			System.out.println("Done Running Inference..."+new Date().toString());
@@ -45,22 +49,14 @@ public class PolicyService {
 				return true;
 			}
 			return false;
-		//	DB.getDB().trackInference(finish-start,devid,rules.size(),inferedCapabilities.size());
+		//	DB.getDB().trackPolicy(finish-start,devid,rules.size(),inferedCapabilities.size());
 		
 		
 		
 	}
 	
 	
-	private static  OntModel getPolicies(){
-		
-		Model m=ModelFactory.createDefaultModel();
-		m.read("http://t3.abdn.ac.uk/policies/t3policy.rdf",null,"TTL");
-		OntModel ontM=ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF, m);
-		
-		
-		return ontM;
-	}
+	
 	
 	
 }
